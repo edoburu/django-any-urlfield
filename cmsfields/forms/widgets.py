@@ -1,14 +1,12 @@
 """
 Custom widgets used by the CMS form fields.
 """
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.util import flatatt
 from django.forms.widgets import RadioFieldRenderer
+from django.template.defaultfilters import slugify
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
-from cmsfields.forms import URL_TYPE_CHOICES, URL_TYPE_EXTERNAL, URL_TYPE_CMSPAGE, URL_TYPE_ARTICLE
 
 
 class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
@@ -37,51 +35,70 @@ class CmsUrlWidget(widgets.MultiWidget):
         js = ('cmsfields/cmsurlfield.js',)
 
 
-    def __init__(self, attrs=None):
+    def __init__(self, url_type_registry, attrs=None):
+        type_choices = [(urltype.prefix, urltype.title) for urltype in url_type_registry]
+
         # Expose sub widgets for form field.
-        self.url_type_id_widget = widgets.RadioSelect(choices=URL_TYPE_CHOICES, renderer=HorizonatalRadioFieldRenderer)
-        self.url_widget = widgets.TextInput(attrs={'class': 'vTextField'})
-        self.page_id_widget = widgets.Select()
+        self.url_type_registry = url_type_registry
+        self.url_type_widget = widgets.RadioSelect(choices=type_choices, renderer=HorizonatalRadioFieldRenderer)
+        self.url_widgets = []
 
-        from articles.models import Article
-        rel = ManyToOneRel(to=Article, field_name='id')
-        self.article_id_widget = ForeignKeyRawIdWidget(rel)
+        # Combine to list, ensure order of values list later.
+        subwidgets = []
+        for urltype in url_type_registry:
+            form_field = urltype.form_field
+            widget = form_field.widget
+            if isinstance(widget, type):
+                widget = widget()
 
-        # Combine to list, ensure order of ID's.
-        subwidgets = [None] * 3
-        subwidgets[URL_TYPE_EXTERNAL] = self.url_widget
-        subwidgets[URL_TYPE_CMSPAGE] = self.page_id_widget
-        subwidgets[URL_TYPE_ARTICLE] = self.article_id_widget
-        subwidgets.insert(0, self.url_type_id_widget)
+            # Widget instantiation needs to happen manually.
+            # Auto skip if choices is not an existing attribute.
+            if getattr(form_field, 'choices', None) and getattr(widget, 'choices', None):
+                widget.choices = form_field.choices
 
+            subwidgets.append(widget)
+
+        subwidgets.insert(0, self.url_type_widget)
+
+        # init MultiWidget base
         super(CmsUrlWidget, self).__init__(subwidgets, attrs=attrs)
 
+
     def decompress(self, value):
-        # Split the CmsUrlValue to the multiple widgets
-        ids = [None] * len(URL_TYPE_CHOICES)
+        # Split the value to a dictionary with key per prefix.
+        # value is a CmsUrlValue object
+        result = [None]
+        values = {}
         if value is None:
-            ids[URL_TYPE_EXTERNAL] = ''
-            return [URL_TYPE_EXTERNAL] + ids
+            values['http'] = ''
+            result[0] = 'http'
         else:
             # Expand the CmsUrlValue to the array of widget values.
             # This is the reason, the widgets are ordered by ID; to make this easy.
-            if value.url_type_id == URL_TYPE_EXTERNAL:
-                ids[URL_TYPE_EXTERNAL] = value.url
+            result[0] = value.type_prefix
+            if value.type_prefix == 'http':
+                values['http'] = value.type_value
             else:
-                ids[value.url_type_id] = value.object_id
+                values[value.type_prefix] = value.type_value
 
-            return [value.url_type_id] + ids
+        # Append all values in the proper ordering
+        for urltype in self.url_type_registry:
+            result.append(values.get(urltype.prefix, None))
+
+        return result
+
 
     def format_output(self, rendered_widgets):
         """
         Custom rendering of the widgets.
         """
-        url_type_id_html = rendered_widgets.pop(0)
-        output = [ url_type_id_html ]
+        urltypes = list(self.url_type_registry)
+        url_type_html = rendered_widgets.pop(0)
+        output = [ url_type_html ]
 
         # Wrap remaining options in <p> for scripting.
         for i, widget_html in enumerate(rendered_widgets):
-            choice = URL_TYPE_CHOICES[i][0]
-            output.append(u'<p class="cmsfield-url-{0}" style="clear:left">{1}</p>'.format(choice, widget_html))
+            prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
+            output.append(u'<p class="cmsfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
 
-        return ''.join(output)
+        return u''.join(output)

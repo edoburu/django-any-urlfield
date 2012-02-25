@@ -1,38 +1,14 @@
 """
 Custom form fields for CMS items
 """
-from cms.models.pagemodel import Page
 from django import forms
-from django.conf import settings
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.forms.models import ModelChoiceField
+from django.db.models.base import Model
 from django.forms.util import ErrorList
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from cmsfields.forms import URL_TYPE_CHOICES, URL_TYPE_EXTERNAL, URL_TYPE_CMSPAGE, URL_TYPE_ARTICLE
 from cmsfields.forms.widgets import CmsUrlWidget
 from cmsfields.models.values import CmsUrlValue
-
-
-class PageChoiceField(forms.ModelChoiceField):
-    """
-    A SelectBox that displays the pages QuerySet, with items indented.
-
-    Unlike the standard cms.models.fields.PageField,
-    this field does not display a second select box for the site.
-    This is easier for single-domain sites.
-    """
-
-    def label_from_instance(self, obj):
-        page = obj
-
-        # From Django-CMS code:
-        page_title = page.get_menu_title(fallback=True)
-        if page_title is None:
-            page_title = u"page %s" % page.pk
-        return mark_safe(u"%s %s" % (u"&nbsp;&nbsp;" * page.level, escape(page_title)))
 
 
 class CmsUrlFormField(forms.MultiValueField):
@@ -41,33 +17,49 @@ class CmsUrlFormField(forms.MultiValueField):
     """
     widget = CmsUrlWidget
 
-    def __init__(self, max_length=None, *args, **kwargs):
-        from articles.models import Article  # prevent circular import
+
+    def __init__(self, url_type_registry, max_length=None, *args, **kwargs):
+        self.url_type_registry = url_type_registry  # UrlTypeRegistry object
 
         # Build fields,
         # these have to match the widget.
-        fields = [None] * 3
-        fields[URL_TYPE_EXTERNAL] = forms.URLField(label=_("Externe URL"), required=False, max_length=max_length)
-        fields[URL_TYPE_CMSPAGE] = PageChoiceField(label=_("Interne pagina"), required=False, queryset=Page.objects.filter(site=settings.SITE_ID).published())
-        fields[URL_TYPE_ARTICLE] = ModelChoiceField(label=_("Artikel"), required=False, queryset=Article.objects.all())
-        fields.insert(0, forms.ChoiceField(label=_("Type URL"), choices=URL_TYPE_CHOICES))
+        fields = []
+        choices = []
+        for urltype in self.url_type_registry:
+            # Get formfield, update properties
+            field = urltype.form_field
+            field.required = False   # Delay check, happens somewhere else.
+            if getattr(field, 'max_length', None) and field.max_length > max_length:
+                field.max_length = max_length
+
+            fields.append(field)
+            choices.append((urltype.prefix, urltype.title))
+        fields.insert(0, forms.ChoiceField(label=_("Type URL"), choices=choices))
 
         # Instantiate widget. Is not done by parent at all.
-        widget = self.widget()
-        widget.page_id_widget.choices = fields[URL_TYPE_CMSPAGE +1].choices
-        widget.article_id_widget.choices = fields[URL_TYPE_ARTICLE +1].choices
+        widget = self.widget(url_type_registry=url_type_registry)
         kwargs['widget'] = widget
         super(CmsUrlFormField, self).__init__(fields, *args, **kwargs)
 
 
     def compress(self, data_list):
         if data_list:
-            object_type_id = int(data_list[0])    # id, *values = data_list  is python 3 syntax.
+            type_prefix = data_list[0]    # avoid `id, *values = data_list` notation, that is python 3 syntax.
             values = data_list[1:]
-            if object_type_id == URL_TYPE_EXTERNAL:
-                return CmsUrlValue(None, values[object_type_id], object_type_id)
+
+            urltype = self.url_type_registry[type_prefix]
+            value_index = self.url_type_registry.index(type_prefix)
+            value = values[value_index]
+
+            if type_prefix == 'http':
+                return CmsUrlValue(self.url_type_registry, type_prefix, value)
             else:
-                return CmsUrlValue(values[object_type_id].pk, None, object_type_id)
+                if urltype.has_id_value:
+                    if isinstance(value, Model):
+                        value = value.pk   # Auto cast foreign keys to integer.
+                    elif value:
+                        value = int(value)
+                return CmsUrlValue(self.url_type_registry, type_prefix, value)
         return None
 
 
@@ -78,14 +70,10 @@ class CmsUrlFormField(forms.MultiValueField):
         errors = ErrorList()
 
         # Only the visible field is required.
-        type_id = int(value[0])
+        radio_value = value[0]
         field_visible = [False] * len(self.fields)
         field_visible[0] = True
-        i = 1
-        for radio_value, title in URL_TYPE_CHOICES:
-            if type_id == radio_value:
-                field_visible[i] = True
-            i += 1
+        field_visible[self.url_type_registry.index(radio_value) + 1] = True
 
         # The validators only fire for visible fields.
         for i, field in enumerate(self.fields):

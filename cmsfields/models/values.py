@@ -1,10 +1,8 @@
 """
 Custom data objects
 """
-from django.db import models
 from django.db.models.loading import get_model
 from django.utils.encoding import StrAndUnicode
-from cmsfields.forms import URL_TYPE_SETTINGS, URL_TYPE_CMSPAGE, URL_TYPE_EXTERNAL
 
 
 class CmsUrlValue(StrAndUnicode):
@@ -14,22 +12,24 @@ class CmsUrlValue(StrAndUnicode):
     This value holds both the internal page ID, and external URL.
     Depending on the active value, the URL is automatically generated.
     """
-    def __init__(self, object_id, url, url_type_id=URL_TYPE_CMSPAGE):
-        self.object_id = int(object_id) if object_id else None
-        self.url = str(url) if url else None
-        self.url_type_id = int(url_type_id)
+    def __init__(self, url_type_registry, type_prefix, type_value):
+        self.url_type_registry = url_type_registry
+        self.url_type = self.url_type_registry[type_prefix]
+        self.type_value = type_value
 
-        assert url_type_id in URL_TYPE_SETTINGS.keys(), "Invalid url_type_id field"
+        if url_type_registry.index(type_prefix) is None:
+            raise ValueError("Unsupported CmsUrlValue prefix: {0}".format(type_prefix))
 
     @classmethod
-    def from_db_value(cls, url):
+    def from_db_value(cls, url_type_registry, url):
         """
         Convert the databse value back to this object.
 
         Url can be something like:
-          http://.. , https://..    -> external URL.
-          pageid://2                -> CMS page.
-          articleid://3             -> Article link.
+
+        * extenal URL: http://.. , https://..
+        * custom prefix: customid://214, customid://some/value
+        * default prefix: appname.model://31
         """
         try:
             prefix, url_rest = url.split('://', 2)
@@ -39,21 +39,13 @@ class CmsUrlValue(StrAndUnicode):
             prefix = 'http'
             url_rest = url
 
-        url_type_id = URL_TYPE_EXTERNAL
-        url_type = None
-        for id, field in URL_TYPE_SETTINGS.iteritems():
-            if prefix in field['prefixes']:
-                url_type_id = id
-                url_type = field
-                break
-        else:
-            raise ValueError("Unsupported CmsUrlValue prefix: " + prefix)
+        url_type = url_type_registry[prefix]
 
-        if url_type['model']:
+        if url_type.has_id_value:
             id = int(url_rest)
-            return CmsUrlValue(id, None, url_type_id)
+            return CmsUrlValue(url_type_registry, prefix, id)
         else:
-            return CmsUrlValue(None, url, url_type_id)
+            return CmsUrlValue(url_type_registry, prefix, url)
 
 
     def to_db_value(self):
@@ -61,41 +53,52 @@ class CmsUrlValue(StrAndUnicode):
         Convert the value back to something that can be stored in the database.
         For example: http://www.external.url/  or pageid://22
         """
-        if self.url_type_id == URL_TYPE_EXTERNAL:
-            return self.url
+        if self.url_type.prefix == 'http':
+            return self.type_value
         else:
-            return "{0}://{1}".format(URL_TYPE_SETTINGS[self.url_type_id]['prefixes'][0], self.object_id)
+            return "{0}://{1}".format(self.url_type.prefix, self.type_value)
 
 
     def exists(self):
-        if self.url_type_id == URL_TYPE_EXTERNAL:
+        if self.url_type.prefix == 'http':
             return True
-        elif self.object_id:
+        elif self.url_type.has_id_value:
             Model = self._get_model()
-            return Model.objects.filter(pk=self.object_id).exists()
+            return Model.objects.filter(pk=self.type_value).exists()
+        elif self.type_value:
+            # Random other value that can't be checked
+            return True
+        else:
+            # None or empty.
+            return False
 
 
     def _get_model(self):
-        Model = URL_TYPE_SETTINGS[self.url_type_id]['model']  # e.g. Page
+        Model = self.url_type.model
         if isinstance(Model, basestring):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
             Model = get_model(app_label, model_name)
         return Model
 
 
+    @property
+    def type_prefix(self):
+        return self.url_type.prefix
+
+
     def __unicode__(self):
         """
         Return the URL that the value points to.
         """
-        if self.object_id:
+        if self.url_type.has_id_value:
             Model = self._get_model()
             try:
-                object = Model.objects.get(pk=self.object_id)
+                object = Model.objects.get(pk=self.type_value)
                 return object.get_absolute_url()
             except Model.DoesNotExist:
                 return u""
         else:
-            return self.url or u""
+            return self.type_value or u""
 
 
     def __len__(self):

@@ -19,7 +19,8 @@
   {
     var inputs = widget.find('input');
     inputs.each(function(){
-      var pane = widget.siblings(".cmsfield-url-" + this.value);
+      var slugvalue = this.value.replace(/[^a-z0-9-_]/, '');
+      var pane = widget.siblings(".cmsfield-url-" + slugvalue);
       pane[ this.checked ? "show" : "hide" ]();
     });
   }

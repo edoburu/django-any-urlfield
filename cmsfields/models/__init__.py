@@ -1,4 +1,4 @@
-from .fields import CmsUrlField, SimplePageField, ImageBrowseField
+from .fields import CmsUrlField
 from .values import CmsUrlValue
 
-__all__ = ['CmsUrlField', 'SimplePageField', 'CmsUrlValue', 'ImageBrowseField']
+__all__ = ('CmsUrlField', 'CmsUrlValue')
