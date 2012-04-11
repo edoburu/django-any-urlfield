@@ -1,6 +1,10 @@
 """
 Custom widgets used by the CMS form fields.
 """
+import django
+from django.contrib import admin
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.util import flatatt
 from django.forms.widgets import RadioFieldRenderer
@@ -102,3 +106,22 @@ class CmsUrlWidget(widgets.MultiWidget):
             output.append(u'<p class="cmsfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
 
         return u''.join(output)
+
+
+class SimpleRawIdWidget(ForeignKeyRawIdWidget):
+    """
+    A wrapper class to create raw ID widgets.
+    """
+    def __init__(self, model, limit_choices_to=None, admin_site=None, attrs=None, using=None):
+        """
+        Instantiate the class.
+        """
+        rel = ManyToOneRel(model, model._meta.pk.name, limit_choices_to=limit_choices_to)
+        if django.VERSION < (1,4):
+            super(SimpleRawIdWidget, self).__init__(rel=rel, attrs=attrs, using=using)
+        else:
+            # admin_site was added in Django 1.4, fixing the popup URL for the change list.
+            # Also default to admin.site, allowing a more auto-configuration style.
+            if admin_site is None:
+                admin_site = admin.site
+            super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
