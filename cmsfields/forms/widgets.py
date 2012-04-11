@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 
 class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
     def __init__(self, name, value, attrs, choices):
-        extraclasses = 'radiolist inline cmsfield-url-type'  # last class is not generic!
+        extraclasses = 'radiolist inline'
         if attrs.has_key('class'):
             attrs['class'] += ' ' + extraclasses
         else:
