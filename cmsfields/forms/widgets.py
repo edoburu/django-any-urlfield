@@ -14,6 +14,10 @@ from django.utils.safestring import mark_safe
 
 
 class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
+    """
+    Render a :class:`~django.forms.widgets.RadioSelect` horizontally in the Django admin interface.
+    This produces a similar layout like the ``radio_fields = {'field': admin.HORIZONTAL}`` code does.
+    """
     def __init__(self, name, value, attrs, choices):
         extraclasses = 'radiolist inline'
         if attrs.has_key('class'):
@@ -32,7 +36,7 @@ class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
 
 class CmsUrlWidget(widgets.MultiWidget):
     """
-    The widget, rendering the URL selector.
+    The URL widget, rendering the URL selector.
     """
 
     class Media:
