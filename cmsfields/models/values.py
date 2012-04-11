@@ -40,6 +40,8 @@ class CmsUrlValue(StrAndUnicode):
             url_rest = url
 
         url_type = url_type_registry[prefix]
+        if url_type is None:
+            raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
 
         if url_type.has_id_value:
             id = int(url_rest)
