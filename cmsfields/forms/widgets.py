@@ -48,7 +48,7 @@ class CmsUrlWidget(widgets.MultiWidget):
 
         # Expose sub widgets for form field.
         self.url_type_registry = url_type_registry
-        self.url_type_widget = widgets.RadioSelect(choices=type_choices, renderer=HorizonatalRadioFieldRenderer)
+        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'cmsfield-url-type'}, renderer=HorizonatalRadioFieldRenderer)
         self.url_widgets = []
 
         # Combine to list, ensure order of values list later.
