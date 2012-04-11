@@ -22,11 +22,11 @@ class CmsUrlField(models.CharField):
 
 
     @classmethod
-    def register_model(cls, ModelClass, form_field, title=None, prefix=None):
+    def register_model(cls, ModelClass, form_field=None, widget=None, title=None, prefix=None):
         """
         Register a model to use in the URL field.
         """
-        cls._static_registry.register(ModelClass, form_field, title, prefix)
+        cls._static_registry.register(ModelClass, form_field, widget, title, prefix)
 
 
     def formfield(self, **kwargs):

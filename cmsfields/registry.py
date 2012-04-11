@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.forms.fields import URLField
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -8,7 +8,14 @@ from django.utils.translation import ugettext_lazy as _
 _invalid_prefixes = ('http', 'https', 'ftp', 'sftp', 'webdav', 'webdavs', 'afp', 'smb', 'git', 'svn', 'hg')
 
 class UrlType(object):
-    def __init__(self, model, form_field, title, prefix, has_id_value):
+    def __init__(self, model, form_field, widget, title, prefix, has_id_value):
+        if form_field is None:
+            # Generate default form field if nothing is provided.
+            if has_id_value:
+                form_field = forms.ModelChoiceField(queryset=model._default_manager.all(), widget=widget)
+            else:
+                form_field = forms.CharField(widget=widget)
+
         self.model = model
         self.form_field = form_field
         self.title = title
@@ -24,14 +31,15 @@ class UrlTypeRegistry(object):
     def __init__(self):
         self._url_types = [UrlType(
             model=None,
-            form_field=URLField(label=_("External URL")),
+            form_field=forms.URLField(label=_("External URL")),
+            widget=None,
             title=_("External URL"),
             prefix='http',   # no https needed, 'http' is a special constant.
             has_id_value=False
         )]
 
 
-    def register(self, ModelClass, form_field, title=None, prefix=None, has_id_value=True):
+    def register(self, ModelClass, form_field=None, widget=None, title=None, prefix=None, has_id_value=True):
         """
         Register a custom model with the ``CmsUrlField``.
         """
@@ -51,7 +59,7 @@ class UrlTypeRegistry(object):
             raise ValueError("Prefix is already registered: '{0}'".format(prefix))
 
         self._url_types.append(
-            UrlType(ModelClass, form_field, title, prefix, has_id_value)
+            UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
         )
 
 
