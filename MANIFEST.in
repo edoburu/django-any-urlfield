@@ -2,3 +2,4 @@
 include AUTHORS
 include README.rst
 include LICENSE
+recursive-include cmsfields/locale *.po *.mo

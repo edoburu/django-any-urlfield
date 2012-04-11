@@ -1,0 +1,25 @@
+# Copyright (C) 2010-2012
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Diederik van der Boor <vdboor@edoburu.nl>, 2012
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-11 19:25+0200\n"
+"PO-Revision-Date: 2011-01-10 23:54+0100\n"
+"Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
+"Language-Team: Dutch <NL@li.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: registry.py:34 registry.py:36
+msgid "External URL"
+msgstr "Externe URL"
+
+#: forms/fields.py:37
+msgid "Type URL"
+msgstr "Soort URL"
