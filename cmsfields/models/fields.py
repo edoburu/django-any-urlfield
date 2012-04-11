@@ -16,7 +16,8 @@ class CmsUrlField(models.CharField):
     _static_registry = UrlTypeRegistry()
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 300
+        if not kwargs.has_key('max_length'):
+            kwargs['max_length'] = 300
         super(CmsUrlField, self).__init__(*args, **kwargs)
 
 
