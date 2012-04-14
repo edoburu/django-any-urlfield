@@ -31,7 +31,7 @@ class UrlTypeRegistry(object):
     def __init__(self):
         self._url_types = [UrlType(
             model=None,
-            form_field=forms.URLField(label=_("External URL")),
+            form_field=forms.URLField(label=_("External URL"), widget=forms.TextInput(attrs={'class': 'vTextField'})),
             widget=None,
             title=_("External URL"),
             prefix='http',   # no https needed, 'http' is a special constant.
