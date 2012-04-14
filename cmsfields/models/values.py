@@ -8,9 +8,14 @@ from django.utils.encoding import StrAndUnicode
 class CmsUrlValue(StrAndUnicode):
     """
     Custom value object for the CmsUrlField.
-
     This value holds both the internal page ID, and external URL.
-    Depending on the active value, the URL is automatically generated.
+
+    A conversion to :class:`unicode` to :class:`str` causes the URL to be generated.
+    This allows the field value to be used in string concatenations, or template variable evaluations:
+
+    .. code-block:: html+django
+
+        {{ mymodel.url }}
     """
     def __init__(self, url_type_registry, type_prefix, type_value):
         self.url_type_registry = url_type_registry
@@ -23,13 +28,13 @@ class CmsUrlValue(StrAndUnicode):
     @classmethod
     def from_db_value(cls, url_type_registry, url):
         """
-        Convert the databse value back to this object.
+        Convert a serialized database value to this object.
 
-        Url can be something like:
+        The value can be something like:
 
-        * extenal URL: http://.. , https://..
-        * custom prefix: customid://214, customid://some/value
-        * default prefix: appname.model://31
+        * an external URL: ``http://..`` , ``https://..``
+        * a custom prefix: ``customid://214``, ``customid://some/value``
+        * a default "app.model" prefix: ``appname.model://31``
         """
         try:
             prefix, url_rest = url.split('://', 2)
@@ -52,8 +57,8 @@ class CmsUrlValue(StrAndUnicode):
 
     def to_db_value(self):
         """
-        Convert the value back to something that can be stored in the database.
-        For example: http://www.external.url/  or pageid://22
+        Convert the value into a serialized format which can be stored in the database.
+        For example: ``http://www.external.url/``  or ``pageid://22``.
         """
         if self.url_type.prefix == 'http':
             return self.type_value
@@ -62,6 +67,9 @@ class CmsUrlValue(StrAndUnicode):
 
 
     def exists(self):
+        """
+        Check whether the references model still exists.
+        """
         if self.url_type.prefix == 'http':
             return True
         elif self.url_type.has_id_value:
@@ -85,6 +93,10 @@ class CmsUrlValue(StrAndUnicode):
 
     @property
     def type_prefix(self):
+        """
+        Return the URL type prefix.
+        For external URLs this is always ``"http"``.
+        """
         return self.url_type.prefix
 
 
