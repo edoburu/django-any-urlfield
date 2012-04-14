@@ -9,6 +9,13 @@ class CmsUrlValue(StrAndUnicode):
     """
     Custom value object for the CmsUrlField.
     This value holds both the internal page ID, and external URL.
+    It can be used to parse the database contents:
+
+    .. code-block:: python
+
+        value = CmsUrlValue.from_db_value(url)
+        article = value.get_object()
+        print unicode(value)
 
     A conversion to :class:`unicode` to :class:`str` causes the URL to be generated.
     This allows the field value to be used in string concatenations, or template variable evaluations:
@@ -84,7 +91,7 @@ class CmsUrlValue(StrAndUnicode):
         if self.url_type.prefix == 'http':
             return True
         elif self.url_type.has_id_value:
-            Model = self._get_model()
+            Model = self.get_model()
             return Model.objects.filter(pk=self.type_value).exists()
         elif self.type_value:
             # Random other value that can't be checked
@@ -94,12 +101,26 @@ class CmsUrlValue(StrAndUnicode):
             return False
 
 
-    def _get_model(self):
+    def get_model(self):
+        """
+        Return the model that this value points to.
+        """
         Model = self.url_type.model
         if isinstance(Model, basestring):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
             Model = get_model(app_label, model_name)
         return Model
+
+
+    def get_object(self):
+        """
+        Return the database object that the value points to.
+        """
+        if self.url_type.has_id_value:
+            Model = self.get_model()
+            return Model.objects.get(pk=self.type_value)
+        else:
+            return None
 
 
     @property
@@ -116,7 +137,7 @@ class CmsUrlValue(StrAndUnicode):
         Return the URL that the value points to.
         """
         if self.url_type.has_id_value:
-            Model = self._get_model()
+            Model = self.get_model()
             try:
                 object = Model.objects.get(pk=self.type_value)
                 return object.get_absolute_url()
