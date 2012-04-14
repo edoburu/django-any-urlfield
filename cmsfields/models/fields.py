@@ -45,7 +45,7 @@ class CmsUrlField(models.CharField):
     Now, the ``Article`` model will be displayed as raw input field with a browse button.
     """
     __metaclass__ = models.SubfieldBase
-    _static_registry = UrlTypeRegistry()
+    _static_registry = UrlTypeRegistry()  # Also accessed by CmsUrlValue as internal field.
 
     def __init__(self, *args, **kwargs):
         if not kwargs.has_key('max_length'):
@@ -89,7 +89,7 @@ class CmsUrlField(models.CharField):
         if value is None:
             return None
 
-        return CmsUrlValue.from_db_value(self._static_registry, value)
+        return CmsUrlValue.from_db_value(value, self._static_registry)
 
     def get_prep_value(self, value):
         # Convert back to string

@@ -17,16 +17,22 @@ class CmsUrlValue(StrAndUnicode):
 
         {{ mymodel.url }}
     """
-    def __init__(self, url_type_registry, type_prefix, type_value):
+    def __init__(self, type_prefix, type_value, url_type_registry=None):
+        # Easy configuration, allowing other code to deserialize database values.
+        if url_type_registry is None:
+            from cmsfields.models.fields import CmsUrlField
+            url_type_registry = CmsUrlField._static_registry
+
         self.url_type_registry = url_type_registry
-        self.url_type = self.url_type_registry[type_prefix]
+        self.url_type = url_type_registry[type_prefix]
         self.type_value = type_value
 
         if url_type_registry.index(type_prefix) is None:
             raise ValueError("Unsupported CmsUrlValue prefix: {0}".format(type_prefix))
 
+
     @classmethod
-    def from_db_value(cls, url_type_registry, url):
+    def from_db_value(cls, url, url_type_registry=None):
         """
         Convert a serialized database value to this object.
 
@@ -36,6 +42,11 @@ class CmsUrlValue(StrAndUnicode):
         * a custom prefix: ``customid://214``, ``customid://some/value``
         * a default "app.model" prefix: ``appname.model://31``
         """
+        # Easy configuration, allowing other code to deserialize database values.
+        if url_type_registry is None:
+            from cmsfields.models.fields import CmsUrlField
+            url_type_registry = CmsUrlField._static_registry
+
         try:
             prefix, url_rest = url.split('://', 2)
         except ValueError:
@@ -50,9 +61,9 @@ class CmsUrlValue(StrAndUnicode):
 
         if url_type.has_id_value:
             id = int(url_rest)
-            return CmsUrlValue(url_type_registry, prefix, id)
+            return CmsUrlValue(prefix, id, url_type_registry)
         else:
-            return CmsUrlValue(url_type_registry, prefix, url)
+            return CmsUrlValue(prefix, url, url_type_registry)
 
 
     def to_db_value(self):
