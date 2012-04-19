@@ -55,14 +55,14 @@ class CmsUrlFormField(forms.MultiValueField):
             value = values[value_index]
 
             if type_prefix == 'http':
-                return CmsUrlValue(self.url_type_registry, type_prefix, value)
+                return CmsUrlValue(type_prefix, value, self.url_type_registry)
             else:
                 if urltype.has_id_value:
                     if isinstance(value, Model):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
                         value = int(value)
-                return CmsUrlValue(self.url_type_registry, type_prefix, value)
+                return CmsUrlValue(type_prefix, value, self.url_type_registry)
         return None
 
 
