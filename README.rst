@@ -21,6 +21,20 @@ Relevant public classes:
  * ``SimpleRawIdWidget``
 
 
+Screenshot
+==========
+
+.. figure:: https://github.com/edoburu/django-cmsfields/raw/master/docs/images/cmsurlfield1.png
+   :width: 363px
+   :height: 74px
+   :alt: CmsUrlField, with external URL input.
+
+.. figure:: https://github.com/edoburu/django-cmsfields/raw/master/docs/images/cmsurlfield2.png
+   :width: 290px
+   :height: 76px
+   :alt: CmsUrlField, with internal page input.
+
+
 Installation
 ============
 
