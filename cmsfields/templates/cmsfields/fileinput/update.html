@@ -1,0 +1,4 @@
+<p class="file-upload">{# easy fix to enforce sizes #}
+  <a href="{{ value.url }}">{% if is_image %}<img src="{{ value.url }}" style="max-width: 500px; max-height: 160px; vertical-align: bottom;">{% else %}{{ value }}{% endif %}</a>
+  {{ input_field }}
+</p>
