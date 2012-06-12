@@ -124,6 +124,9 @@ class FileBrowseField(FileBrowseField):
     """
     The file browse field based on django-filebrowser, or any other filebrowser.
     It's a drop-in replacement for the django :class:`~django.db.models.FileField`
+
+    When *django-filebrowser* is not installed, it will display the
+    standard :class:`~django.db.models.FileField`.
     """
 
 
@@ -131,6 +134,9 @@ class ImageBrowseField(ImageBrowseField):
     """
     The image browse field based on django-filebrowser, or any other filebrowser.
     It's a drop-in replacement for the django :class:`~django.db.models.ImageField`
+
+    When *django-filebrowser* is not installed, it will display the
+    standard :class:`~django.db.models.ImageField` with a preview attached to it.
     """
 
 

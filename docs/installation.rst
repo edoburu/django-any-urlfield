@@ -27,11 +27,12 @@ In a Django model, the field can be included:
 
     from django.db import models
     from django.utils.translation import ugettext_lazy as _
-    from cmsfields.models.fields import CmsUrlField
+    from cmsfields.models.fields import CmsUrlField, ImageBrowseField
 
     class MyModel(models.Model):
         title = models.CharField(_("title"), max_length=200)
         url = CmsUrlField(_("URL"))
+        image = ImageBrowseField(_("image"))
 
 By default, the ``CmsUrlField`` only supports linking to external pages.
 To add support for your own models (e.g. an ``Article`` model),
@@ -45,5 +46,5 @@ include the following code in ``models.py``:
 Now, the ``CmsUrlField`` offers users a dropdown field to directly select an article.
 
 For more configuration options of the :func:`~cmsfields.models.CmsUrlField.register_model` function,
-see the documentation of the :class:`~cmsfields.models.CmsUrlField` class.
+see the documentation of the :class:`~cmsfields.models.CmsUrlField` and :class:`~cmsfields.models.ImageBrowseField` classes.
 

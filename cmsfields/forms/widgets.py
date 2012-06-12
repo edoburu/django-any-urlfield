@@ -124,6 +124,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
     """
     A wrapper class to create raw ID widgets.
 
+    It produces a same layout as the ``raw_id_fields = (field',)`` code does in the admin interface.
     This class wraps the functionality of the Django admin application
     into a usable format that is both compatible with Django 1.3 and 1.4.
 

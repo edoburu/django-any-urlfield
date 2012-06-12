@@ -16,7 +16,7 @@ class CmsUrlFormField(forms.MultiValueField):
     Form field that combines a Page ID and external page URL.
 
     The form field is used automatically when
-    the ~:class:`cmsfields.models.CmsUrlField` is used in the model.
+    the :class:`~cmsfields.models.CmsUrlField` is used in the model.
     """
     widget = CmsUrlWidget
 
