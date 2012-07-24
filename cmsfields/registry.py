@@ -62,6 +62,8 @@ class UrlTypeRegistry(object):
             raise ValueError("Invalid prefix value: '{0}'.".format(prefix))
         if self[prefix] is not None:
             raise ValueError("Prefix is already registered: '{0}'".format(prefix))
+        if form_field is not None and widget is not None:
+            raise ValueError("Provide either a form_field or widget; use the widget parameter of the form field instead.")
 
         self._url_types.append(
             UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
