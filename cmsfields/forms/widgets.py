@@ -1,16 +1,14 @@
 """
 Custom widgets used by the CMS form fields.
 """
-import mimetypes
 import django
 from django.contrib import admin
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget, AdminFileWidget
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.util import flatatt
-from django.forms.widgets import RadioFieldRenderer, ClearableFileInput
+from django.forms.widgets import RadioFieldRenderer
 from django.template.defaultfilters import slugify
-from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
@@ -147,28 +145,3 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
             if admin_site is None:
                 admin_site = admin.site
             super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
-
-
-class ImagePreviewWidget(AdminFileWidget):
-    """
-    An :class:`~django.forms.FileInput` widget that also displays a preview of the image.
-    """
-    template_with_initial = u'%(clear_template)s</p><p>%(input_text)s: %(input)s'
-
-    def render(self, name, value, attrs=None):
-        is_image = False
-        if value:
-            (mime_type, encoding) = mimetypes.guess_type(value.path)
-            is_image = mime_type and mime_type.startswith('image/')
-
-        # Render different field for replacing
-        input_field = super(ImagePreviewWidget, self).render(name, value, attrs)
-        if not value:
-            return input_field
-        else:
-            return render_to_string("cmsfields/fileinput/update.html", {
-                'value': value,
-                'is_image': is_image,
-                'input_field': input_field,
-                'input_text': self.input_text,
-            })

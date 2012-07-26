@@ -1,7 +1,7 @@
-from .fields import CmsUrlFormField, ImagePreviewField
-from .widgets import CmsUrlWidget, ImagePreviewWidget, SimpleRawIdWidget, HorizonatalRadioFieldRenderer
+from .fields import CmsUrlFormField
+from .widgets import CmsUrlWidget, SimpleRawIdWidget, HorizonatalRadioFieldRenderer
 
 __all__ = (
-    'CmsUrlFormField', 'ImagePreviewField',
-    'CmsUrlWidget', 'ImagePreviewWidget', 'SimpleRawIdWidget', 'HorizonatalRadioFieldRenderer'
+    'CmsUrlFormField',
+    'CmsUrlWidget', 'SimpleRawIdWidget', 'HorizonatalRadioFieldRenderer'
 )

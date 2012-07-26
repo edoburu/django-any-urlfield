@@ -15,12 +15,6 @@ The ``CmsUrlWidget`` class
 .. autoclass:: cmsfields.forms.CmsUrlWidget
    :members:
 
-The ``ImagePreviewWidget`` class
---------------------------------
-
-.. autoclass:: cmsfields.forms.ImagePreviewWidget
-   :members:
-
 The ``HorizonatalRadioFieldRenderer`` class
 -------------------------------------------
 

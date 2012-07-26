@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.base import Model
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from cmsfields.forms.widgets import CmsUrlWidget, ImagePreviewWidget
+from cmsfields.forms.widgets import CmsUrlWidget
 from cmsfields.models.values import CmsUrlValue
 
 
@@ -102,10 +102,3 @@ class CmsUrlFormField(forms.MultiValueField):
         out = self.compress(clean_data)
         self.validate(out)
         return out
-
-
-class ImagePreviewField(forms.ImageField):
-    """
-    An `~django.forms.widgets.ImageField` subclass that also displays an inline preview of the image.
-    """
-    widget = ImagePreviewWidget

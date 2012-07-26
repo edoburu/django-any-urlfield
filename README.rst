@@ -14,14 +14,11 @@ Relevant public classes:
 * Model fields:
 
  * ``CmsUrlField``: allow users to choose either a model or external link as URL value
- * ``FileBrowseField``: allow users to select or delete a file.
- * ``ImageBrowseField``: allow users to select or delete an image and see a preview.
 
 * Form widget rendering:
 
  * ``HorizonatalRadioFieldRenderer``
  * ``SimpleRawIdWidget``
- * ``ImagePreviewInput``
 
 
 Screenshot
@@ -65,12 +62,11 @@ In a Django model, the field can be included::
 
     from django.db import models
     from django.utils.translation import ugettext_lazy as _
-    from cmsfields.models.fields import CmsUrlField, ImageBrowseField
+    from cmsfields.models.fields import CmsUrlField
 
     class MyModel(models.Model):
         title = models.CharField(_("title"), max_length=200)
         url = CmsUrlField(_("URL"))
-        image = ImageBrowseField(_("image"))
 
 By default, the ``CmsUrlField`` only supports linking to external pages.
 To add support for your own models (e.g. an ``Article`` model),
@@ -90,8 +86,3 @@ to render the field.  This can be customized using the ``form_field`` and ``widg
 
 Now, the ``Article`` model will be displayed as raw input field with a browse button.
 
-The ``ImageBrowseField`` displays a preview by default.
-When django-filebrowser_ is available and included in ``INSTALLED_APPS``, it will be used automatically instead.
-
-
-.. _django-filebrowser: https://github.com/wardi/django-filebrowser-no-grappelli

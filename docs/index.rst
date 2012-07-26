@@ -26,8 +26,6 @@ Relevant public classes:
 * Model fields:
 
  * :class:`~cmsfields.models.CmsUrlField`: allow users to choose either a model or external link as URL value
- * :class:`~cmsfields.models.FileBrowseField`: allow users to select a file.
- * :class:`~cmsfields.models.ImageBrowseField`: allow users to select an image and see a preview.
 
 * Form widget rendering:
 
