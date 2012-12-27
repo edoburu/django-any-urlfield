@@ -19,6 +19,8 @@ Relevant public classes:
  * ``HorizonatalRadioFieldRenderer``
  * ``SimpleRawIdWidget``
 
+For more details, see the documentation_ at Read The Docs.
+
 
 Screenshot
 ==========
@@ -84,4 +86,7 @@ to render the field.  This can be customized using the ``form_field`` and ``widg
     AnyUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
 
 Now, the ``Article`` model will be displayed as raw input field with a browse button.
+
+
+.. _documentation: http://django-any-urlfield.readthedocs.org/
 
