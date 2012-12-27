@@ -7,6 +7,7 @@ that supports both URLs to internal models and external URLs.
 This addresses is a common challenge in CMS interfaces;
 where providing a ``URLField`` makes it hard to enter internal URLs,
 while providing a ``ModelChoiceField`` makes it too inflexible.
+This package provides the both of both worlds.
 
 Relevant public classes:
 
