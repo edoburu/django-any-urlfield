@@ -2,7 +2,7 @@
 {
   $(document).ready(function(){
     var widgets = $("ul.any_urlfield-url_type");
-    widgets.find("input").change(onUrlTypeChange);
+    widgets.find("input").live('change', onUrlTypeChange);
 
     // Apply by default
     widgets.each(function(){ updatePanels($(this)); });
