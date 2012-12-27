@@ -17,7 +17,7 @@ setup(
     version='1.0.0',
     license='Apache License, Version 2.0',
 
-    description='A set of CMS input fields, including an improved URL selector',
+    description='An improved URL selector to choose between internal models and external URLs',
     long_description=open(join(dirname(__file__), 'README.rst')).read(),
 
     author='Diederik van der Boor',
