@@ -149,3 +149,15 @@ class AnyUrlValue(StrAndUnicode):
 
     def __len__(self):
         return len(unicode(self))
+
+
+    def __repr__(self):
+        return "<AnyUrlValue '{0}'>".format(self.to_db_value())
+
+
+    def __getattr__(self, item):
+        return getattr(unicode(self), item)
+
+
+    def __getitem__(self, item):
+        return unicode(self).__getitem__(item)
