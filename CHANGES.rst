@@ -1,3 +1,9 @@
+Version 1.0.1
+-------------
+
+* Use jQuery live events to support using the ``AnyUrlField`` in Django inlines.
+
+
 Version 1.0.0
 -------------
 
