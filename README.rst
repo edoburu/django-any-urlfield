@@ -62,12 +62,11 @@ Usage
 In a Django model, the field can be included::
 
     from django.db import models
-    from django.utils.translation import ugettext_lazy as _
     from any_urlfield.models.fields import AnyUrlField
 
     class MyModel(models.Model):
-        title = models.CharField(_("title"), max_length=200)
-        url = AnyUrlField(_("URL"))
+        title = models.CharField("Title", max_length=200)
+        url = AnyUrlField("URL")
 
 By default, the ``AnyUrlField`` only supports linking to external pages.
 To add support for your own models (e.g. an ``Article`` model),
