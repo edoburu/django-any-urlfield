@@ -2,10 +2,11 @@
 Welcome to django-any-urlfield's documentation!
 ===============================================
 
-The ``any_urlfield`` module offers a model field to select URLs to internal models or entering an external URLs.
+The ``any_urlfield`` module provides an improved URL selector
+that supports both URLs to internal models and external URLs.
 
 This addresses is a common challenge in CMS interfaces;
-where providing a ``URLField`` makes it hard to enter internal URLs,
+where providing a :class:`~django.models.URLField` makes it hard to enter internal URLs,
 while providing a ``ModelChoiceField`` makes it too inflexible.
 
 .. figure:: /images/anyurlfield1.*
@@ -29,7 +30,6 @@ Relevant public classes:
 
  * :class:`~any_urlfield.forms.HorizonatalRadioFieldRenderer`
  * :class:`~any_urlfield.forms.SimpleRawIdWidget`
- * :class:`~any_urlfield.forms.ImagePreviewWidget`
 
 Contents
 --------

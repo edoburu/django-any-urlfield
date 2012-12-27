@@ -1,7 +1,8 @@
-Introduction
-============
+django-any-urlfield
+===================
 
-The ``any_urlfield`` module allows users to enter URLs to internal models and external URLs.
+The ``any_urlfield`` module provides an improved URL selector
+that supports both URLs to internal models and external URLs.
 
 This addresses is a common challenge in CMS interfaces;
 where providing a ``URLField`` makes it hard to enter internal URLs,
