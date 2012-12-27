@@ -88,5 +88,16 @@ to render the field.  This can be customized using the ``form_field`` and ``widg
 Now, the ``Article`` model will be displayed as raw input field with a browse button.
 
 
+Contributing
+------------
+
+This module is designed to be generic. In case there is anything you didn't like about it,
+or think it's not flexible enough, please let us know. We'd love to improve it!
+
+If you have any other valuable contribution, suggestion or idea,
+please let us know as well because we will look into it.
+Pull requests are welcome too. :-)
+
+
 .. _documentation: http://django-any-urlfield.readthedocs.org/
 
