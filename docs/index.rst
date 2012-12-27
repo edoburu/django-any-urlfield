@@ -6,8 +6,8 @@ The ``any_urlfield`` module provides an improved URL selector
 that supports both URLs to internal models and external URLs.
 
 This addresses is a common challenge in CMS interfaces;
-where providing a :class:`~django.models.URLField` makes it hard to enter internal URLs,
-while providing a ``ModelChoiceField`` makes it too inflexible.
+where providing a :class:`~django.forms.URLField` makes it hard to enter internal URLs,
+while providing a :class:`~django.forms.ModelChoiceField` makes it too inflexible.
 
 .. figure:: /images/anyurlfield1.*
    :width: 363px

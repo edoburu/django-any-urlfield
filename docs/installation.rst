@@ -42,7 +42,7 @@ include the following code in ``models.py``:
     from any_urlfield.models import AnyUrlField
     AnyUrlField.register_model(Article)
 
-Now, the ``AnyUrlField`` offers users a dropdown field to directly select an article.
+Now, the :class:`~any_urlfield.models.AnyUrlField` offers users a dropdown field to directly select an article.
 
 For more configuration options of the :func:`~any_urlfield.models.AnyUrlField.register_model` function,
 see the documentation of the :class:`~any_urlfield.models.AnyUrlField` class.

@@ -7,7 +7,7 @@ from django.utils.encoding import StrAndUnicode
 
 class AnyUrlValue(StrAndUnicode):
     """
-    Custom value object for the AnyUrlField.
+    Custom value object for the :class:`~any_urlfield.models.AnyUrlField`.
     This value holds both the internal page ID, and external URL.
     It can be used to parse the database contents:
 
@@ -17,7 +17,7 @@ class AnyUrlValue(StrAndUnicode):
         article = value.get_object()
         print unicode(value)
 
-    A conversion to :class:`unicode` to :class:`str` causes the URL to be generated.
+    A conversion to :class:`unicode` or :class:`str` causes the URL to be generated.
     This allows the field value to be used in string concatenations, or template variable evaluations:
 
     .. code-block:: html+django

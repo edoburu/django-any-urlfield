@@ -15,10 +15,10 @@ from django.utils.safestring import mark_safe
 
 class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
     """
-    Render a :class:`~django.forms.widgets.RadioSelect` horizontally in the Django admin interface.
+    Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
 
     This produces a similar layout like the ``radio_fields = {'field': admin.HORIZONTAL}`` code does in the admin interface.
-    It can be used as argument for the :class:`~django.forms.widgets.RadioSelect` widget:
+    It can be used as argument for the :class:`~django.forms.RadioSelect` widget:
 
     .. code-block:: python
 

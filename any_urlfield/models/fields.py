@@ -24,7 +24,7 @@ class AnyUrlField(models.CharField):
 
     By default, the ``AnyUrlField`` only supports linking to external pages.
     To add support for your own models (e.g. an ``Article`` model),
-    include the following code in ``models.py``:
+    include the following code in :file:`models.py`:
 
     .. code-block:: python
 
@@ -32,7 +32,7 @@ class AnyUrlField(models.CharField):
         AnyUrlField.register_model(Article)
 
     Now, the ``AnyUrlField`` offers users a dropdown field to directly select an article.
-    By default, it uses a ``django.forms.models.ModelChoiceField`` field with a ``django.forms.widgets.Select`` widget
+    By default, it uses a :class:`django.forms.ModelChoiceField` field with a :class:`django.forms.Select` widget
     to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters:
 
     .. code-block:: python
