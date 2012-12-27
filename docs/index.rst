@@ -1,37 +1,35 @@
 
-Welcome to django-cmsfields's documentation!
-============================================
+Welcome to django-any-urlfield's documentation!
+===============================================
 
-The ``cmsfields`` module offers additional form widgets, useful to build CMS interfaces.
+The ``any_urlfield`` module offers a model field to select URLs to internal models or entering an external URLs.
 
-The main feature is the ``CmsUrlField``, which allows URLs to be entered
-by either selecting an internal model, or entering an external URL.
 This addresses is a common challenge in CMS interfaces;
 where providing a ``URLField`` makes it hard to enter internal URLs,
 while providing a ``ModelChoiceField`` makes it too inflexible.
 
-.. figure:: /images/cmsurlfield1.*
+.. figure:: /images/anyurlfield1.*
    :width: 363px
    :height: 74px
-   :alt: CmsUrlField, with external URL input.
+   :alt: AnyUrlField, with external URL input.
 
-.. figure:: /images/cmsurlfield2.*
+.. figure:: /images/anyurlfield2.*
    :width: 290px
    :height: 76px
-   :alt: CmsUrlField, with internal page input.
+   :alt: AnyUrlField, with internal page input.
 
 
 Relevant public classes:
 
 * Model fields:
 
- * :class:`~cmsfields.models.CmsUrlField`: allow users to choose either a model or external link as URL value
+ * :class:`~any_urlfield.models.AnyUrlField`: allow users to choose either a model or external link as URL value
 
 * Form widget rendering:
 
- * :class:`~cmsfields.forms.HorizonatalRadioFieldRenderer`
- * :class:`~cmsfields.forms.SimpleRawIdWidget`
- * :class:`~cmsfields.forms.ImagePreviewWidget`
+ * :class:`~any_urlfield.forms.HorizonatalRadioFieldRenderer`
+ * :class:`~any_urlfield.forms.SimpleRawIdWidget`
+ * :class:`~any_urlfield.forms.ImagePreviewWidget`
 
 Contents
 --------

@@ -1,29 +1,29 @@
-cmsfields.forms
-================
+any_urlfield.forms
+==================
 
-.. automodule:: cmsfields.forms
+.. automodule:: any_urlfield.forms
 
-The ``CmsUrlFormField`` class
------------------------------
+The ``AnyUrlField`` class
+-------------------------
 
-.. autoclass:: cmsfields.forms.CmsUrlFormField
+.. autoclass:: any_urlfield.forms.AnyUrlField
    :members:
 
-The ``CmsUrlWidget`` class
+The ``AnyUrlWidget`` class
 --------------------------
 
-.. autoclass:: cmsfields.forms.CmsUrlWidget
+.. autoclass:: any_urlfield.forms.AnyUrlWidget
    :members:
 
 The ``HorizonatalRadioFieldRenderer`` class
 -------------------------------------------
 
-.. autoclass:: cmsfields.forms.HorizonatalRadioFieldRenderer
+.. autoclass:: any_urlfield.forms.HorizonatalRadioFieldRenderer
    :members:
 
 The ``SimpleRawIdWidget`` class
 -------------------------------
 
-.. autoclass:: cmsfields.forms.SimpleRawIdWidget
+.. autoclass:: any_urlfield.forms.SimpleRawIdWidget
    :members:
 

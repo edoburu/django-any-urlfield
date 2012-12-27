@@ -1,17 +1,17 @@
-cmsfields.models
-================
+any_urlfield.models
+===================
 
-.. automodule:: cmsfields.models
+.. automodule:: any_urlfield.models
 
-The ``CmsUrlField`` class
+The ``AnyUrlField`` class
 -------------------------
 
-.. autoclass:: cmsfields.models.CmsUrlField
+.. autoclass:: any_urlfield.models.AnyUrlField
    :members:
 
-The ``CmsUrlValue`` class
+The ``AnyUrlValue`` class
 -------------------------
 
-.. autoclass:: cmsfields.models.CmsUrlValue
+.. autoclass:: any_urlfield.models.AnyUrlValue
    :members:
 

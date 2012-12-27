@@ -5,7 +5,7 @@ import sys, os
 
 # When creating the sdist, make sure the django.mo file also exists:
 try:
-    os.chdir('cmsfields')
+    os.chdir('any_urlfield')
     from django.core.management.commands.compilemessages import compile_messages
     compile_messages(sys.stderr)
 finally:
@@ -13,7 +13,7 @@ finally:
 
 
 setup(
-    name='django-cmsfields',
+    name='django-any-urlfield',
     version='1.0.0',
     license='Apache License, Version 2.0',
 
@@ -23,8 +23,8 @@ setup(
     author='Diederik van der Boor',
     author_email='opensource@edoburu.nl',
 
-    url='https://github.com/edoburu/django-cmsfields',
-    download_url='https://github.com/edoburu/django-cmsfields/zipball/master',
+    url='https://github.com/edoburu/django-any-urlfield',
+    download_url='https://github.com/edoburu/django-any-urlfield/zipball/master',
 
     packages=find_packages(exclude=('example*',)),
     include_package_data=True,

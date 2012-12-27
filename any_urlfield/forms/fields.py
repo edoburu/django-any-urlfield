@@ -1,5 +1,5 @@
 """
-Custom form fields for CMS items
+Custom form fields for URLs
 """
 from django import forms
 from django.core import validators
@@ -7,18 +7,18 @@ from django.core.exceptions import ValidationError
 from django.db.models.base import Model
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from cmsfields.forms.widgets import CmsUrlWidget
-from cmsfields.models.values import CmsUrlValue
+from any_urlfield.forms.widgets import AnyUrlWidget
+from any_urlfield.models.values import AnyUrlValue
 
 
-class CmsUrlFormField(forms.MultiValueField):
+class AnyUrlField(forms.MultiValueField):
     """
     Form field that combines a Page ID and external page URL.
 
     The form field is used automatically when
-    the :class:`~cmsfields.models.CmsUrlField` is used in the model.
+    the :class:`~any_urlfield.models.AnyUrlField` is used in the model.
     """
-    widget = CmsUrlWidget
+    widget = AnyUrlWidget
 
 
     def __init__(self, url_type_registry, max_length=None, *args, **kwargs):
@@ -42,7 +42,7 @@ class CmsUrlFormField(forms.MultiValueField):
         # Instantiate widget. Is not done by parent at all.
         widget = self.widget(url_type_registry=url_type_registry)
         kwargs['widget'] = widget
-        super(CmsUrlFormField, self).__init__(fields, *args, **kwargs)
+        super(AnyUrlField, self).__init__(fields, *args, **kwargs)
 
 
     def compress(self, data_list):
@@ -55,14 +55,14 @@ class CmsUrlFormField(forms.MultiValueField):
             value = values[value_index]
 
             if type_prefix == 'http':
-                return CmsUrlValue(type_prefix, value, self.url_type_registry)
+                return AnyUrlValue(type_prefix, value, self.url_type_registry)
             else:
                 if urltype.has_id_value:
                     if isinstance(value, Model):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
                         value = int(value)
-                return CmsUrlValue(type_prefix, value, self.url_type_registry)
+                return AnyUrlValue(type_prefix, value, self.url_type_registry)
         return None
 
 

@@ -42,7 +42,7 @@ class UrlTypeRegistry(object):
 
     def register(self, ModelClass, form_field=None, widget=None, title=None, prefix=None, has_id_value=True):
         """
-        Register a custom model with the ``CmsUrlField``.
+        Register a custom model with the ``AnyUrlField``.
         """
         if any(urltype.model == ModelClass for urltype in self._url_types):
             raise ValueError("Model is already registered: '{0}'".format(ModelClass))

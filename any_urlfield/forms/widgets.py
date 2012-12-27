@@ -1,5 +1,5 @@
 """
-Custom widgets used by the CMS form fields.
+Custom widgets used by the URL form fields.
 """
 import django
 from django.contrib import admin
@@ -40,13 +40,13 @@ class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
         )
 
 
-class CmsUrlWidget(widgets.MultiWidget):
+class AnyUrlWidget(widgets.MultiWidget):
     """
     The URL widget, rendering the URL selector.
     """
 
     class Media:
-        js = ('cmsfields/cmsurlfield.js',)
+        js = ('any_urlfield/any_urlfield.js',)
 
 
     def __init__(self, url_type_registry, attrs=None):
@@ -54,7 +54,7 @@ class CmsUrlWidget(widgets.MultiWidget):
 
         # Expose sub widgets for form field.
         self.url_type_registry = url_type_registry
-        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'cmsfield-url-type'}, renderer=HorizonatalRadioFieldRenderer)
+        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'any_urlfield-url_type'}, renderer=HorizonatalRadioFieldRenderer)
         self.url_widgets = []
 
         # Combine to list, ensure order of values list later.
@@ -75,19 +75,19 @@ class CmsUrlWidget(widgets.MultiWidget):
         subwidgets.insert(0, self.url_type_widget)
 
         # init MultiWidget base
-        super(CmsUrlWidget, self).__init__(subwidgets, attrs=attrs)
+        super(AnyUrlWidget, self).__init__(subwidgets, attrs=attrs)
 
 
     def decompress(self, value):
         # Split the value to a dictionary with key per prefix.
-        # value is a CmsUrlValue object
+        # value is a AnyUrlValue object
         result = [None]
         values = {}
         if value is None:
             values['http'] = ''
             result[0] = 'http'
         else:
-            # Expand the CmsUrlValue to the array of widget values.
+            # Expand the AnyUrlValue to the array of widget values.
             # This is the reason, the widgets are ordered by ID; to make this easy.
             result[0] = value.type_prefix
             if value.type_prefix == 'http':
@@ -113,7 +113,7 @@ class CmsUrlWidget(widgets.MultiWidget):
         # Wrap remaining options in <p> for scripting.
         for i, widget_html in enumerate(rendered_widgets):
             prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
-            output.append(u'<p class="cmsfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
+            output.append(u'<p class="any_urlfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
 
         return u''.join(output)
 

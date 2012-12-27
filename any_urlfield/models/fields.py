@@ -4,53 +4,53 @@ Custom model fields to link to CMS content.
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from cmsfields.models.values import CmsUrlValue
-from cmsfields.registry import UrlTypeRegistry
+from any_urlfield.models.values import AnyUrlValue
+from any_urlfield.registry import UrlTypeRegistry
 
 
-class CmsUrlField(models.CharField):
+class AnyUrlField(models.CharField):
     """
     A CharField that can either refer to a CMS page ID, or external URL.
 
-    .. figure:: /images/cmsurlfield1.*
+    .. figure:: /images/anyurlfield1.*
        :width: 363px
        :height: 74px
-       :alt: CmsUrlField, with external URL input.
+       :alt: AnyUrlField, with external URL input.
 
-    .. figure:: /images/cmsurlfield2.*
+    .. figure:: /images/anyurlfield2.*
        :width: 290px
        :height: 76px
-       :alt: CmsUrlField, with internal page input.
+       :alt: AnyUrlField, with internal page input.
 
-    By default, the ``CmsUrlField`` only supports linking to external pages.
+    By default, the ``AnyUrlField`` only supports linking to external pages.
     To add support for your own models (e.g. an ``Article`` model),
     include the following code in ``models.py``:
 
     .. code-block:: python
 
-        from cmsfields.models import CmsUrlField
-        CmsUrlField.register_model(Article)
+        from any_urlfield.models import AnyUrlField
+        AnyUrlField.register_model(Article)
 
-    Now, the ``CmsUrlField`` offers users a dropdown field to directly select an article.
+    Now, the ``AnyUrlField`` offers users a dropdown field to directly select an article.
     By default, it uses a ``django.forms.models.ModelChoiceField`` field with a ``django.forms.widgets.Select`` widget
     to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters:
 
     .. code-block:: python
 
-        from cmsfields.models import CmsUrlField
-        from cmsfields.forms.widgets import SimpleRawIdWidget
+        from any_urlfield.models import AnyUrlField
+        from any_urlfield.forms.widgets import SimpleRawIdWidget
 
-        CmsUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
+        AnyUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
 
     Now, the ``Article`` model will be displayed as raw input field with a browse button.
     """
     __metaclass__ = models.SubfieldBase
-    _static_registry = UrlTypeRegistry()  # Also accessed by CmsUrlValue as internal field.
+    _static_registry = UrlTypeRegistry()  # Also accessed by AnyUrlValue as internal field.
 
     def __init__(self, *args, **kwargs):
         if not kwargs.has_key('max_length'):
             kwargs['max_length'] = 300
-        super(CmsUrlField, self).__init__(*args, **kwargs)
+        super(AnyUrlField, self).__init__(*args, **kwargs)
 
 
     @classmethod
@@ -73,23 +73,23 @@ class CmsUrlField(models.CharField):
     def formfield(self, **kwargs):
         # Associate formfield.
         # Import locally to avoid circular references.
-        from cmsfields.forms.fields import CmsUrlFormField
-        kwargs['form_class'] = CmsUrlFormField
+        from any_urlfield.forms.fields import AnyUrlField as AnyUrlFormField
+        kwargs['form_class'] = AnyUrlFormField
         kwargs['url_type_registry'] = self._static_registry
         if kwargs.has_key('widget'):
             del kwargs['widget']
-        return super(CmsUrlField, self).formfield(**kwargs)
+        return super(AnyUrlField, self).formfield(**kwargs)
 
 
     def to_python(self, value):
-        if isinstance(value, CmsUrlValue):
+        if isinstance(value, AnyUrlValue):
             return value
 
         # Convert the string value
         if value is None:
             return None
 
-        return CmsUrlValue.from_db_value(value, self._static_registry)
+        return AnyUrlValue.from_db_value(value, self._static_registry)
 
     def get_prep_value(self, value):
         # Convert back to string
@@ -98,7 +98,7 @@ class CmsUrlField(models.CharField):
 
     def validate(self, value, model_instance):
         # Final validation of the field, before storing in the DB.
-        super(CmsUrlField, self).validate(value, model_instance)
+        super(AnyUrlField, self).validate(value, model_instance)
         if value:
             if value.type_prefix == 'http':
                 validate_url = URLValidator()
@@ -112,7 +112,7 @@ class CmsUrlField(models.CharField):
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], [
-        "^cmsfields\.models\.fields\.CmsUrlField",
+        "^" + __name__.replace(".", "\.") + "\.AnyUrlField",
     ])
 except ImportError:
     pass

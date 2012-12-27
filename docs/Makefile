@@ -77,17 +77,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/django-cmsfields.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/django-any-urlfield.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/django-cmsfields.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/django-any-urlfield.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/django-cmsfields"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/django-cmsfields"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/django-any-urlfield"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/django-any-urlfield"
 	@echo "# devhelp"
 
 epub:

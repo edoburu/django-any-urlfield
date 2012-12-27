@@ -5,15 +5,15 @@ from django.db.models.loading import get_model
 from django.utils.encoding import StrAndUnicode
 
 
-class CmsUrlValue(StrAndUnicode):
+class AnyUrlValue(StrAndUnicode):
     """
-    Custom value object for the CmsUrlField.
+    Custom value object for the AnyUrlField.
     This value holds both the internal page ID, and external URL.
     It can be used to parse the database contents:
 
     .. code-block:: python
 
-        value = CmsUrlValue.from_db_value(url)
+        value = AnyUrlValue.from_db_value(url)
         article = value.get_object()
         print unicode(value)
 
@@ -27,15 +27,15 @@ class CmsUrlValue(StrAndUnicode):
     def __init__(self, type_prefix, type_value, url_type_registry=None):
         # Easy configuration, allowing other code to deserialize database values.
         if url_type_registry is None:
-            from cmsfields.models.fields import CmsUrlField
-            url_type_registry = CmsUrlField._static_registry
+            from any_urlfield.models.fields import AnyUrlField
+            url_type_registry = AnyUrlField._static_registry
 
         self.url_type_registry = url_type_registry
         self.url_type = url_type_registry[type_prefix]
         self.type_value = type_value
 
         if url_type_registry.index(type_prefix) is None:
-            raise ValueError("Unsupported CmsUrlValue prefix: {0}".format(type_prefix))
+            raise ValueError("Unsupported AnyUrlValue prefix: {0}".format(type_prefix))
 
 
     @classmethod
@@ -51,8 +51,8 @@ class CmsUrlValue(StrAndUnicode):
         """
         # Easy configuration, allowing other code to deserialize database values.
         if url_type_registry is None:
-            from cmsfields.models.fields import CmsUrlField
-            url_type_registry = CmsUrlField._static_registry
+            from any_urlfield.models.fields import AnyUrlField
+            url_type_registry = AnyUrlField._static_registry
 
         try:
             prefix, url_rest = url.split('://', 2)
@@ -68,9 +68,9 @@ class CmsUrlValue(StrAndUnicode):
 
         if url_type.has_id_value:
             id = int(url_rest)
-            return CmsUrlValue(prefix, id, url_type_registry)
+            return AnyUrlValue(prefix, id, url_type_registry)
         else:
-            return CmsUrlValue(prefix, url, url_type_registry)
+            return AnyUrlValue(prefix, url, url_type_registry)
 
 
     def to_db_value(self):

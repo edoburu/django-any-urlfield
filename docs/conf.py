@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# django-cmsfields documentation build configuration file, created by
+# django-any-urlfield documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr 13 19:11:03 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -42,7 +42,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-cmsfields'
+project = u'django-any-urlfield'
 copyright = u'2012, Diederik van der Boor'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -166,7 +166,7 @@ html_theme = 'default'
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-cmsfieldsdoc'
+htmlhelp_basename = 'django-any-urlfielddoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,7 +185,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'django-cmsfields.tex', u'django-cmsfields Documentation',
+  ('index', 'django-any-urlfield.tex', u'django-any-urlfield Documentation',
    u'Diederik van der Boor', 'manual'),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-cmsfields', u'django-cmsfields Documentation',
+    ('index', 'django-any-urlfield', u'django-any-urlfield Documentation',
      [u'Diederik van der Boor'], 1)
 ]
 
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-cmsfields', u'django-cmsfields Documentation',
-   u'Diederik van der Boor', 'django-cmsfields', 'One line description of project.',
+  ('index', 'django-any-urlfield', u'django-any-urlfield Documentation',
+   u'Diederik van der Boor', 'django-any-urlfield', 'One line description of project.',
    'Miscellaneous'),
 ]
 
