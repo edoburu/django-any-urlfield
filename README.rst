@@ -9,17 +9,6 @@ where providing a ``URLField`` makes it hard to enter internal URLs,
 while providing a ``ModelChoiceField`` makes it too inflexible.
 This package provides the both of both worlds.
 
-Relevant public classes:
-
-* Model fields:
-
- * ``AnyUrlField``: allow users to choose either a model or external link as URL value
-
-* Form widget rendering:
-
- * ``HorizonatalRadioFieldRenderer``
- * ``SimpleRawIdWidget``
-
 For more details, see the documentation_ at Read The Docs.
 
 
