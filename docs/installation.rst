@@ -15,7 +15,7 @@ Configuration
 Add the module to the installed apps::
 
     INSTALLED_APPS += (
-        'cmsfields',
+        'any_urlfield',
     )
 
 Usage
