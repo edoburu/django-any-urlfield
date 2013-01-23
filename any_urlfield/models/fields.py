@@ -38,7 +38,7 @@ class AnyUrlField(models.CharField):
     .. code-block:: python
 
         from any_urlfield.models import AnyUrlField
-        from any_urlfield.forms.widgets import SimpleRawIdWidget
+        from any_urlfield.forms import SimpleRawIdWidget
 
         AnyUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
 

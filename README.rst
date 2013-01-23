@@ -52,7 +52,7 @@ Usage
 In a Django model, the field can be included::
 
     from django.db import models
-    from any_urlfield.models.fields import AnyUrlField
+    from any_urlfield.models import AnyUrlField
 
     class MyModel(models.Model):
         title = models.CharField("Title", max_length=200)
@@ -70,7 +70,7 @@ By default, it uses a ``django.forms.models.ModelChoiceField`` field with a ``dj
 to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters::
 
     from any_urlfield.models import AnyUrlField
-    from any_urlfield.forms.widgets import SimpleRawIdWidget
+    from any_urlfield.forms import SimpleRawIdWidget
 
     AnyUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
 

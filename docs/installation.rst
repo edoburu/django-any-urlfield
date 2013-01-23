@@ -27,7 +27,7 @@ In a Django model, the field can be included:
 
     from django.db import models
     from django.utils.translation import ugettext_lazy as _
-    from any_urlfield.models.fields import AnyUrlField
+    from any_urlfield.models import AnyUrlField
 
     class MyModel(models.Model):
         title = models.CharField(_("title"), max_length=200)
