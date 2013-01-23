@@ -28,7 +28,7 @@ Relevant public classes:
 
 * Form widget rendering:
 
- * :class:`~any_urlfield.forms.HorizonatalRadioFieldRenderer`
+ * :class:`~any_urlfield.forms.HorizontalRadioFieldRenderer`
  * :class:`~any_urlfield.forms.SimpleRawIdWidget`
 
 Contents

@@ -13,7 +13,7 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
 
-class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
+class HorizontalRadioFieldRenderer(RadioFieldRenderer):
     """
     Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
 
@@ -22,7 +22,7 @@ class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
 
     .. code-block:: python
 
-        widget = widgets.RadioSelect(choices=choices, renderer=HorizonatalRadioFieldRenderer)
+        widget = widgets.RadioSelect(choices=choices, renderer=HorizontalRadioFieldRenderer)
     """
     def __init__(self, name, value, attrs, choices):
         extraclasses = 'radiolist inline'
@@ -31,7 +31,7 @@ class HorizonatalRadioFieldRenderer(RadioFieldRenderer):
         else:
             attrs['class'] = extraclasses
 
-        super(HorizonatalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
+        super(HorizontalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
 
     def render(self):
         return mark_safe(u'<ul%s>\n%s\n</ul>' % (
@@ -54,7 +54,7 @@ class AnyUrlWidget(widgets.MultiWidget):
 
         # Expose sub widgets for form field.
         self.url_type_registry = url_type_registry
-        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'any_urlfield-url_type'}, renderer=HorizonatalRadioFieldRenderer)
+        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'any_urlfield-url_type'}, renderer=HorizontalRadioFieldRenderer)
         self.url_widgets = []
 
         # Combine to list, ensure order of values list later.
