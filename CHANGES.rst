@@ -1,3 +1,10 @@
+Version 1.0.2
+-------------
+
+* Fix ``setup.py`` code to generate translation files for the ``sdist``.
+* Remove ``HorizonatalRadioFieldRenderer`` from the public API.
+
+
 Version 1.0.1
 -------------
 
