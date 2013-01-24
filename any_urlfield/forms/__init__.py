@@ -1,7 +1,7 @@
 from .fields import AnyUrlField
-from .widgets import AnyUrlWidget, SimpleRawIdWidget, HorizontalRadioFieldRenderer
+from .widgets import AnyUrlWidget, SimpleRawIdWidget
 
 __all__ = (
     'AnyUrlField',
-    'AnyUrlWidget', 'SimpleRawIdWidget', 'HorizontalRadioFieldRenderer'
+    'AnyUrlWidget', 'SimpleRawIdWidget',
 )

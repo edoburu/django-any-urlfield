@@ -15,12 +15,6 @@ The ``AnyUrlWidget`` class
 .. autoclass:: any_urlfield.forms.AnyUrlWidget
    :members:
 
-The ``HorizontalRadioFieldRenderer`` class
--------------------------------------------
-
-.. autoclass:: any_urlfield.forms.HorizontalRadioFieldRenderer
-   :members:
-
 The ``SimpleRawIdWidget`` class
 -------------------------------
 
