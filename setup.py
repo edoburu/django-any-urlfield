@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 from os.path import dirname, join
-import sys, os
+import os
+import sys
 
 # When creating the sdist, make sure the django.mo file also exists:
 try:
     os.chdir('any_urlfield')
-    from django.core.management.commands.compilemessages import compile_messages
-    compile_messages(sys.stderr)
+    try:
+        from django.core.management.commands.compilemessages import compile_messages
+        compile_messages(sys.stderr)
+    except ImportError:
+        pass
 finally:
     os.chdir('..')
 
