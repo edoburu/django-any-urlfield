@@ -15,7 +15,7 @@ if 'sdist' in sys.argv:
 
 setup(
     name='django-any-urlfield',
-    version='1.0.2',
+    version='1.0.3',
     license='Apache License, Version 2.0',
 
     requires=[
