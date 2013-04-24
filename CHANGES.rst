@@ -1,6 +1,7 @@
 Version 1.0.3
 -------------
 
+* Fix change detection, to support formsets and admin inlines.
 * Fix widget alignment within a ``TabularInline``.
 
 

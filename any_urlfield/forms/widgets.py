@@ -103,6 +103,12 @@ class AnyUrlWidget(widgets.MultiWidget):
         return result
 
 
+    def _has_changed(self, initial, data):
+        if initial is None:
+            initial = [u'http', u'', u'', u'']
+        return super(AnyUrlWidget, self)._has_changed(initial, data)
+
+
     def format_output(self, rendered_widgets):
         """
         Custom rendering of the widgets.
