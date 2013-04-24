@@ -1,3 +1,9 @@
+Version 1.0.3
+-------------
+
+* Fix widget alignment within a ``TabularInline``.
+
+
 Version 1.0.2
 -------------
 

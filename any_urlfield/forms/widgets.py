@@ -47,6 +47,7 @@ class AnyUrlWidget(widgets.MultiWidget):
 
     class Media:
         js = ('any_urlfield/any_urlfield.js',)
+        css = {'all': ('any_urlfield/any_urlfield.css',)}
 
 
     def __init__(self, url_type_registry, attrs=None):

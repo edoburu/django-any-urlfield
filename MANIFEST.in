@@ -3,5 +3,5 @@ include AUTHORS
 include README.rst
 include CHANGES.rst
 include LICENSE
-recursive-include any_urlfield/static *.js
+recursive-include any_urlfield/static *.js *.css
 recursive-include any_urlfield/locale *.po *.mo

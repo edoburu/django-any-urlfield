@@ -1,0 +1,5 @@
+form .aligned td ul.any_urlfield-url_type {
+  /* Fix alignment in tabular inline */
+  margin-left: 0;
+  padding-left: 0;
+}
