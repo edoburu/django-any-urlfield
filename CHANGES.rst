@@ -1,3 +1,9 @@
+Version 1.0.4
+-------------
+
+* Fix https URL support
+
+
 Version 1.0.3
 -------------
 

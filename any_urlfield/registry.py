@@ -77,6 +77,9 @@ class UrlTypeRegistry(object):
 
 
     def __getitem__(self, prefix):
+        if prefix == 'https':
+            prefix = 'http'
+
         for urltype in self._url_types:
             if urltype.prefix == prefix:
                 return urltype
@@ -87,6 +90,10 @@ class UrlTypeRegistry(object):
         """
         Return the model index for a prefix.
         """
+        # Any web domain will be handled by the standard URLField.
+        if prefix == 'https':
+            prefix = 'http'
+
         for i, urltype in enumerate(self._url_types):
             if urltype.prefix == prefix:
                 return i
