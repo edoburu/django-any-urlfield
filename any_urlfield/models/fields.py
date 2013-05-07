@@ -92,8 +92,12 @@ class AnyUrlField(models.CharField):
         return AnyUrlValue.from_db_value(value, self._static_registry)
 
     def get_prep_value(self, value):
-        # Convert back to string
-        return value.to_db_value()
+        if isinstance(value, basestring):
+            # Happens with south migration
+            return value
+        else:
+            # Convert back to string
+            return value.to_db_value()
 
 
     def validate(self, value, model_instance):
