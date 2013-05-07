@@ -2,6 +2,7 @@ Version 1.0.5
 -------------
 
 * Fix errors during south migration
+* Fix errors when deleting rows in an inline formset which uses an ``AnyUrlField``.
 
 
 Version 1.0.4

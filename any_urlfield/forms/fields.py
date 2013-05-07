@@ -50,6 +50,10 @@ class AnyUrlField(forms.MultiValueField):
             type_prefix = data_list[0]    # avoid `id, *values = data_list` notation, that is python 3 syntax.
             values = data_list[1:]
 
+            # May happen when deleting models in formsets
+            if type_prefix is None or type_prefix == '':
+                return None
+
             urltype = self.url_type_registry[type_prefix]
             value_index = self.url_type_registry.index(type_prefix)
             value = values[value_index]
@@ -76,29 +80,34 @@ class AnyUrlField(forms.MultiValueField):
         radio_value = value[0]
         field_visible = [False] * len(self.fields)
         field_visible[0] = True
-        field_visible[self.url_type_registry.index(radio_value) + 1] = True
+        if radio_value is None:
+            # radio_value is None when models are deleted in formsets
+            out = ''
+        else:
+            field_visible[self.url_type_registry.index(radio_value) + 1] = True
 
-        # The validators only fire for visible fields.
-        for i, field in enumerate(self.fields):
-            try:
-                field_value = value[i]
-            except IndexError:
-                field_value = None
+            # The validators only fire for visible fields.
+            for i, field in enumerate(self.fields):
+                try:
+                    field_value = value[i]
+                except IndexError:
+                    field_value = None
 
-            if not field_visible[i]:
-                clean_data.append(None)
-                continue
+                if not field_visible[i]:
+                    clean_data.append(None)
+                    continue
 
-            if self.required and field_value in validators.EMPTY_VALUES:
-                raise ValidationError(self.error_messages['required'])
+                if self.required and field_value in validators.EMPTY_VALUES:
+                    raise ValidationError(self.error_messages['required'])
 
-            try:
-                clean_data.append(field.clean(field_value))
-            except ValidationError, e:
-                errors.extend(e.messages)  # Collect all widget errors
-        if errors:
-            raise ValidationError(errors)
+                try:
+                    clean_data.append(field.clean(field_value))
+                except ValidationError, e:
+                    errors.extend(e.messages)  # Collect all widget errors
+            if errors:
+                raise ValidationError(errors)
 
-        out = self.compress(clean_data)
+            out = self.compress(clean_data)
+
         self.validate(out)
         return out
