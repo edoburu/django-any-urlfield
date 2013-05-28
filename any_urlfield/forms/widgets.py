@@ -143,7 +143,11 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
         """
         Instantiate the class.
         """
-        rel = ManyToOneRel(model, model._meta.pk.name, limit_choices_to=limit_choices_to)
+        if django.VERSION >= (1, 6, 0):
+            rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
+        else:
+            rel = ManyToOneRel(model, model._meta.pk.name, limit_choices_to=limit_choices_to)
+
         if django.VERSION < (1,4):
             super(SimpleRawIdWidget, self).__init__(rel=rel, attrs=attrs, using=using)
         else:
