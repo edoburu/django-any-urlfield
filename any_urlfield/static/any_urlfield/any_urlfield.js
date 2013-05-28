@@ -5,7 +5,7 @@
 
     if($.fn.on) {
       // jQuery 1.7+
-      widgets.find("input").on('change', onUrlTypeChange);
+      $('body').on('change', 'ul.any_urlfield-url_type input', onUrlTypeChange);
     }
     else {
       widgets.find("input").live('change', onUrlTypeChange);
