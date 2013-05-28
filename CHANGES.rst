@@ -1,4 +1,4 @@
-Version 1.0.6
+Version 1.0.7
 -------------
 
 * Fix using this widget with Django 1.6 alpha 1
