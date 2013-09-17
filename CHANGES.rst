@@ -1,3 +1,9 @@
+Version 1.0.8 (dev)
+-------------------
+
+* Use ``long()`` for ID's, not ``int()``.
+
+
 Version 1.0.7
 -------------
 

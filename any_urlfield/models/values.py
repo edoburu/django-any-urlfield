@@ -67,7 +67,7 @@ class AnyUrlValue(StrAndUnicode):
             raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
 
         if url_type.has_id_value:
-            id = int(url_rest)
+            id = long(url_rest)
             return AnyUrlValue(prefix, id, url_type_registry)
         else:
             return AnyUrlValue(prefix, url, url_type_registry)
