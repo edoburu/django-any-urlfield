@@ -1,8 +1,12 @@
 """
 Custom data objects
 """
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.loading import get_model
 from django.utils.encoding import StrAndUnicode
+import logging
+
+logger = logging.getLogger('any_urlfield.models')
 
 
 class AnyUrlValue(StrAndUnicode):
@@ -137,12 +141,17 @@ class AnyUrlValue(StrAndUnicode):
         Return the URL that the value points to.
         """
         if self.url_type.has_id_value:
+            if not self.type_value:
+                return u""
+
             Model = self.get_model()
             try:
                 object = Model.objects.get(pk=self.type_value)
                 return object.get_absolute_url()
-            except Model.DoesNotExist:
-                return u""
+            except ObjectDoesNotExist as e:
+                # Silently fail in templates. Avoid full page crashing.
+                logger.exception("Failed to generate URL for {0}".format(repr(self)))
+                return u"#{0}".format(e.__class__.__name__)
         else:
             return self.type_value or u""
 
