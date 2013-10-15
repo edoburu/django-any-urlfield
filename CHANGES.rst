@@ -1,7 +1,14 @@
-Version 1.0.8 (dev)
--------------------
+Version 1.0.9
+-------------
+
+* Fixed exporting the value in the ``dumpdata`` command.
+
+
+Version 1.0.8
+-------------
 
 * Use ``long()`` for ID's, not ``int()``.
+* Improve ``ObjectDoesNotExist`` check in ``AnyUrlValue.__unicode__()``, to support model translations.
 
 
 Version 1.0.7
