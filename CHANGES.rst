@@ -1,6 +1,7 @@
 Version 1.0.8 (dev)
 -------------------
 
+* ``_has_changed`` is no longer used in django >= 1.6.0
 * Use ``long()`` for ID's, not ``int()``.
 
 
