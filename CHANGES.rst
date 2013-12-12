@@ -1,3 +1,10 @@
+Version 1.0.10
+--------------
+
+* Fix using ``AnyUrlField`` with ``blank=True``.
+* Fix ``_has_changed`` is no longer used in django >= 1.6.0
+
+
 Version 1.0.9
 -------------
 
@@ -7,7 +14,6 @@ Version 1.0.9
 Version 1.0.8
 -------------
 
-* ``_has_changed`` is no longer used in django >= 1.6.0
 * Use ``long()`` for ID's, not ``int()``.
 * Improve ``ObjectDoesNotExist`` check in ``AnyUrlValue.__unicode__()``, to support model translations.
 
