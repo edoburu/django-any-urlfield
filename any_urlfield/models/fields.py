@@ -96,6 +96,8 @@ class AnyUrlField(models.CharField):
         if isinstance(value, basestring):
             # Happens with south migration
             return value
+        elif value is None:
+            return None if self.null else ''
         else:
             # Convert back to string
             return value.to_db_value()

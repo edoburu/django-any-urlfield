@@ -66,6 +66,8 @@ class AnyUrlField(forms.MultiValueField):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
                         value = long(value)
+                    else:
+                        return None
                 return AnyUrlValue(type_prefix, value, self.url_type_registry)
         return None
 

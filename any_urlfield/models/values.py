@@ -71,6 +71,8 @@ class AnyUrlValue(StrAndUnicode):
             raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
 
         if url_type.has_id_value:
+            if url_rest == 'None':
+                return None
             id = long(url_rest)
             return AnyUrlValue(prefix, id, url_type_registry)
         else:
@@ -84,6 +86,8 @@ class AnyUrlValue(StrAndUnicode):
         """
         if self.url_type.prefix == 'http':
             return self.type_value
+        elif self.type_value is None:
+            return None  # avoid app.model://None
         else:
             return "{0}://{1}".format(self.url_type.prefix, self.type_value)
 
