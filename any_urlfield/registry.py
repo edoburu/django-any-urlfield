@@ -58,7 +58,7 @@ class UrlTypeRegistry(object):
         if not title:
             title = ModelClass._meta.verbose_name
 
-        if prefix in _invalid_prefixes:
+        if self.is_external_url_prefix(prefix):
             raise ValueError("Invalid prefix value: '{0}'.".format(prefix))
         if self[prefix] is not None:
             raise ValueError("Prefix is already registered: '{0}'".format(prefix))
@@ -69,6 +69,9 @@ class UrlTypeRegistry(object):
             UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
         )
 
+
+    def is_external_url_prefix(self, prefix):
+        return prefix in _invalid_prefixes
 
     # Accessing API is similar to `list` and '`dict`:
 
