@@ -1,3 +1,9 @@
+Version 1.0.11
+--------------
+
+* Improve external URL support (https, ftps, smb, etc..)
+
+
 Version 1.0.10
 --------------
 

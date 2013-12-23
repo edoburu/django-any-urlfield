@@ -68,13 +68,7 @@ class AnyUrlValue(StrAndUnicode):
 
         url_type = url_type_registry[prefix]
         if url_type is None:
-            # the prefix is not in the registry, we now need to check if the
-            # prefix is an external URL prefix and if so set the url_type to
-            # the 'http' built in entry
-            if url_type_registry.is_external_url_prefix(prefix):
-                url_type = url_type_registry['http']
-            else:
-                raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
+            raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
 
         if url_type.has_id_value:
             if url_rest == 'None':

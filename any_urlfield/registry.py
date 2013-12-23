@@ -80,7 +80,8 @@ class UrlTypeRegistry(object):
 
 
     def __getitem__(self, prefix):
-        if prefix == 'https':
+        # Any web domain will be handled by the standard URLField.
+        if self.is_external_url_prefix(prefix):
             prefix = 'http'
 
         for urltype in self._url_types:
@@ -94,7 +95,7 @@ class UrlTypeRegistry(object):
         Return the model index for a prefix.
         """
         # Any web domain will be handled by the standard URLField.
-        if prefix == 'https':
+        if self.is_external_url_prefix(prefix):
             prefix = 'http'
 
         for i, urltype in enumerate(self._url_types):
