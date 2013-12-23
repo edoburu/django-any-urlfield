@@ -66,9 +66,9 @@ class UrlTypeRegistry(object):
         if form_field is not None and widget is not None:
             raise ValueError("Provide either a form_field or widget; use the widget parameter of the form field instead.")
 
-        self._url_types.append(
-            UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
-        )
+        urltype = UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
+        self._url_types.append(urltype)
+        return urltype
 
 
     def is_external_url_prefix(self, prefix):
