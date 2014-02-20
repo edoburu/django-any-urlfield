@@ -22,6 +22,9 @@ class UrlType(object):
         self.prefix = prefix
         self.has_id_value = has_id_value
 
+    def __repr__(self):
+        return "<UrlType {0}>".format(self.prefix)
+
 
 class UrlTypeRegistry(object):
     """
