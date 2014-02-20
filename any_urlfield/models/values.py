@@ -78,7 +78,7 @@ class AnyUrlValue(StrAndUnicode):
 
         url_type = url_type_registry[prefix]
         if url_type is None:
-            raise ValueError("Unsupported URL prefix in database value '{0}'.".format(url))
+            raise ValueError("Unsupported URL prefix in database value '{0}'. Supported values are: {1}".format(url, url_type_registry.keys()))
 
         if url_type.has_id_value:
             if url_rest == 'None':

@@ -105,3 +105,10 @@ class UrlTypeRegistry(object):
             if urltype.prefix == prefix:
                 return i
         return None
+
+
+    def keys(self):
+        """
+        Return the available url type prefixes.
+        """
+        return [urltype.prefix for urltype in self._url_types]
