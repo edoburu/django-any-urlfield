@@ -2,6 +2,7 @@ Version 1.0.11
 --------------
 
 * Improve external URL support (https, ftps, smb, etc..)
+* Fix unnecessary query at registration of custom models.
 
 
 Version 1.0.10

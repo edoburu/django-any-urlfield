@@ -1,6 +1,4 @@
-from django.contrib.contenttypes.models import ContentType
 from django import forms
-from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -48,14 +46,15 @@ class UrlTypeRegistry(object):
         if any(urltype.model == ModelClass for urltype in self._url_types):
             raise ValueError("Model is already registered: '{0}'".format(ModelClass))
 
+        opts = ModelClass._meta
         try:
-            ct = ContentType.objects.get_for_model(ModelClass)
-        except DatabaseError:
-            return   # skip at first syncdb
+            opts = opts.concrete_model._meta
+        except AttributeError:  # Django 1.3
+            pass
 
         if not prefix:
             # Store something descriptive, easier to lookup from raw database content.
-            prefix = '{0}.{1}'.format(*ct.natural_key())
+            prefix = '{0}.{1}'.format(opts.app_label, opts.object_name.lower())
         if not title:
             title = ModelClass._meta.verbose_name
 
