@@ -1,10 +1,20 @@
 """
 Custom data objects
 """
+from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.loading import get_model
 from django.utils.encoding import StrAndUnicode
 import logging
+
+try:
+    from django.utils import six
+    unicode = six.text_type
+    string_types = six.string_types
+except ImportError:
+    # Python 2, Django 1.3
+    string_types = basestring
+
 
 logger = logging.getLogger('any_urlfield.models')
 
@@ -114,7 +124,7 @@ class AnyUrlValue(StrAndUnicode):
         Return the model that this value points to.
         """
         Model = self.url_type.model
-        if isinstance(Model, basestring):
+        if isinstance(Model, string_types):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
             Model = get_model(app_label, model_name)
         return Model
@@ -140,13 +150,14 @@ class AnyUrlValue(StrAndUnicode):
         return self.url_type.prefix
 
 
+    # Python 3 support comes from StrAndUnicode
     def __unicode__(self):
         """
         Return the URL that the value points to.
         """
         if self.url_type.has_id_value:
             if not self.type_value:
-                return u""
+                return ""
 
             Model = self.get_model()
             try:
@@ -155,9 +166,9 @@ class AnyUrlValue(StrAndUnicode):
             except ObjectDoesNotExist as e:
                 # Silently fail in templates. Avoid full page crashing.
                 logger.exception("Failed to generate URL for {0}".format(repr(self)))
-                return u"#{0}".format(e.__class__.__name__)
+                return "#{0}".format(e.__class__.__name__)
         else:
-            return self.type_value or u""
+            return self.type_value or ""
 
 
     def __len__(self):
@@ -165,7 +176,7 @@ class AnyUrlValue(StrAndUnicode):
 
 
     def __repr__(self):
-        return "<AnyUrlValue '{0}'>".format(self.to_db_value())
+        return str("<AnyUrlValue '{0}'>".format(self.to_db_value()))
 
 
     def __getattr__(self, item):

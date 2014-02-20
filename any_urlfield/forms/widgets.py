@@ -1,6 +1,7 @@
 """
 Custom widgets used by the URL form fields.
 """
+from __future__ import unicode_literals
 import django
 from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
@@ -26,7 +27,7 @@ class HorizontalRadioFieldRenderer(RadioFieldRenderer):
     """
     def __init__(self, name, value, attrs, choices):
         extraclasses = 'radiolist inline'
-        if attrs.has_key('class'):
+        if 'class' in attrs:
             attrs['class'] += ' ' + extraclasses
         else:
             attrs['class'] = extraclasses

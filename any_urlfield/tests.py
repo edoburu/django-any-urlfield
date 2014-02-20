@@ -1,7 +1,14 @@
+from __future__ import unicode_literals
 from django.db import models
 from django.test import TestCase
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
+
+try:
+    from django.utils import six
+    unicode = six.text_type
+except ImportError:
+    pass  # Python 2, Django 1.3
 
 
 class TestModel(models.Model):
@@ -27,27 +34,27 @@ class AnyUrlTests(TestCase):
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("http://www.example.com/", reg)
-        self.assertEquals(v.type_prefix, 'http')
-        self.assertEquals(v.type_value, "http://www.example.com/")
-        self.assertEquals(unicode(v), u"http://www.example.com/")
+        self.assertEqual(v.type_prefix, 'http')
+        self.assertEqual(v.type_value, "http://www.example.com/")
+        self.assertEqual(unicode(v), "http://www.example.com/")
 
 
     def test_from_dbvalue_https(self):
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("https://www.example.com/", reg)
-        self.assertEquals(v.type_prefix, 'http')   # http is the constant for external URL types
-        self.assertEquals(v.type_value, "https://www.example.com/")
-        self.assertEquals(unicode(v), u"https://www.example.com/")
+        self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
+        self.assertEqual(v.type_value, "https://www.example.com/")
+        self.assertEqual(unicode(v), "https://www.example.com/")
 
 
     def test_from_dbvalue_ftps(self):
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("ftps://www.example.com/", reg)
-        self.assertEquals(v.type_prefix, 'http')   # http is the constant for external URL types
-        self.assertEquals(v.type_value, "ftps://www.example.com/")
-        self.assertEquals(unicode(v), u"ftps://www.example.com/")
+        self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
+        self.assertEqual(v.type_value, "ftps://www.example.com/")
+        self.assertEqual(unicode(v), "ftps://www.example.com/")
 
 
     def test_from_db_value_id(self):
@@ -59,17 +66,17 @@ class AnyUrlTests(TestCase):
 
         # Database state
         self.assertTrue(page.id)
-        self.assertEquals(urltype.prefix, 'any_urlfield.pagemodel')   # app_label.modelname
-        self.assertEquals(v.type_prefix, urltype.prefix)
-        self.assertEquals(v.type_value, page.id)
-        self.assertEquals(v.to_db_value(), u'any_urlfield.pagemodel://1')
+        self.assertEqual(urltype.prefix, 'any_urlfield.pagemodel')   # app_label.modelname
+        self.assertEqual(v.type_prefix, urltype.prefix)
+        self.assertEqual(v.type_value, page.id)
+        self.assertEqual(v.to_db_value(), 'any_urlfield.pagemodel://1')
 
         # Frontend
-        self.assertEquals(unicode(v), u"/foo/")          # fetches model and returns get_absolute_url()
+        self.assertEqual(unicode(v), "/foo/")          # fetches model and returns get_absolute_url()
 
         # Programmer API's
         self.assertIs(v.get_model(), PageModel)
-        self.assertEquals(v.get_object(), page)
+        self.assertEqual(v.get_object(), page)
         self.assertTrue(v.exists())
 
 
@@ -79,11 +86,11 @@ class AnyUrlTests(TestCase):
         v = AnyUrlValue(urltype.prefix, 999999, reg)
 
         # Database state
-        self.assertEquals(v.type_value, 999999)
-        self.assertEquals(v.to_db_value(), u'any_urlfield.pagemodel://999999')
+        self.assertEqual(v.type_value, 999999)
+        self.assertEqual(v.to_db_value(), 'any_urlfield.pagemodel://999999')
 
         # Frontend
-        self.assertEquals(unicode(v), u"#DoesNotExist")       # Avoids frontend errors
+        self.assertEqual(unicode(v), "#DoesNotExist")       # Avoids frontend errors
 
         # Programmer API's
         self.assertIs(v.get_model(), PageModel)

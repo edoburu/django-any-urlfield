@@ -48,7 +48,7 @@ class AnyUrlField(models.CharField):
     _static_registry = UrlTypeRegistry()  # Also accessed by AnyUrlValue as internal field.
 
     def __init__(self, *args, **kwargs):
-        if not kwargs.has_key('max_length'):
+        if 'max_length' not in kwargs:
             kwargs['max_length'] = 300
         super(AnyUrlField, self).__init__(*args, **kwargs)
 
@@ -76,7 +76,7 @@ class AnyUrlField(models.CharField):
         from any_urlfield.forms.fields import AnyUrlField as AnyUrlFormField
         kwargs['form_class'] = AnyUrlFormField
         kwargs['url_type_registry'] = self._static_registry
-        if kwargs.has_key('widget'):
+        if 'widget' in kwargs:
             del kwargs['widget']
         return super(AnyUrlField, self).formfield(**kwargs)
 
