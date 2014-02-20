@@ -1,3 +1,7 @@
+.. image::  https://travis-ci.org/edoburu/django-any-urlfield.png?branch=master
+  :target: http://travis-ci.org/edoburu/django-any-urlfield
+  :alt: build-status
+
 django-any-urlfield
 ===================
 
