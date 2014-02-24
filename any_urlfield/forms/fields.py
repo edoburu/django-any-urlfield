@@ -1,10 +1,11 @@
 """
 Custom form fields for URLs
 """
+import copy
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.db.models.base import Model
+from django.db.models.base import Model, django
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from any_urlfield.forms.widgets import AnyUrlWidget
@@ -113,3 +114,12 @@ class AnyUrlField(forms.MultiValueField):
 
         self.validate(out)
         return out
+
+    if django.VERSION < (1,7):
+        # ModelChoiceField.__deepcopy__ was skipped because this object didn't deepcopy the fields.
+        # That causes issues when the queryset needs to be reevaluated (e.g. for queries with a SITE_ID threadlocal).
+
+        def __deepcopy__(self, memo):
+            result = super(AnyUrlField, self).__deepcopy__(memo)
+            result.fields = copy.deepcopy(result.fields, memo)
+            return result

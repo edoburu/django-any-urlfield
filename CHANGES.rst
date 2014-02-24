@@ -5,6 +5,13 @@ Version 2.0 (in development)
 * Allow passing callables to the form_field parameter of ``AnyUrlField.register_model``
 
 
+Version 1.0.12
+--------------
+
+* Implement ``AnyUrlField.__deepcopy__()`` to workaround Django < 1.7 issue,
+  where ``__deepcopy__()`` is missing for ``MultiValueField`` classes.
+
+
 Version 1.0.11
 --------------
 
