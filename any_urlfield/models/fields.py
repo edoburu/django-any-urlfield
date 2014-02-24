@@ -62,7 +62,7 @@ class AnyUrlField(models.CharField):
         that should be selectable in the URL field.
 
         :param ModelClass: The model to register.
-        :param form_field: The form field class used to render the field.
+        :param form_field: The form field class used to render the field. This can be a lambda for lazy evaluation.
         :param widget: The widget class, can be used instead of the form field.
         :param title: The title of the model, by default it uses the models ``verbose_name``.
         :param prefix: A custom prefix for the model in the serialized database format. By default it uses "appname.modelname".

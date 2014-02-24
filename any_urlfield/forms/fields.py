@@ -30,7 +30,7 @@ class AnyUrlField(forms.MultiValueField):
         choices = []
         for urltype in self.url_type_registry:
             # Get formfield, update properties
-            field = urltype.form_field
+            field = urltype.get_form_field()
             field.required = False   # Delay check, happens somewhere else.
             if getattr(field, 'max_length', None) and field.max_length > max_length:
                 field.max_length = max_length

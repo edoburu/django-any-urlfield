@@ -25,6 +25,31 @@ class UrlType(object):
     def __repr__(self):
         return "<UrlType {0}>".format(self.prefix)
 
+    def get_form_field(self):
+        """
+        Create the form field for the URL type.
+        """
+        if callable(self.form_field):
+            return self.form_field()
+        else:
+            return self.form_field
+
+    def get_widget(self):
+        """
+        Create the widget for the URL type.
+        """
+        form_field = self.get_form_field()
+        widget = form_field.widget
+        if isinstance(widget, type):
+            widget = widget()
+
+        # Widget instantiation needs to happen manually.
+        # Auto skip if choices is not an existing attribute.
+        if getattr(form_field, 'choices', None) and getattr(widget, 'choices', None):
+            widget.choices = form_field.choices
+        return widget
+
+
 
 class UrlTypeRegistry(object):
     """

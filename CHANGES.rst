@@ -2,6 +2,7 @@ Version 2.0 (in development)
 ----------------------------
 
 * Added Python 3 support
+* Allow passing callables to the form_field parameter of ``AnyUrlField.register_model``
 
 
 Version 1.0.11

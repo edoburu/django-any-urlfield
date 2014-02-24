@@ -62,16 +62,7 @@ class AnyUrlWidget(widgets.MultiWidget):
         # Combine to list, ensure order of values list later.
         subwidgets = []
         for urltype in url_type_registry:
-            form_field = urltype.form_field
-            widget = form_field.widget
-            if isinstance(widget, type):
-                widget = widget()
-
-            # Widget instantiation needs to happen manually.
-            # Auto skip if choices is not an existing attribute.
-            if getattr(form_field, 'choices', None) and getattr(widget, 'choices', None):
-                widget.choices = form_field.choices
-
+            widget = urltype.get_widget()
             subwidgets.append(widget)
 
         subwidgets.insert(0, self.url_type_widget)
