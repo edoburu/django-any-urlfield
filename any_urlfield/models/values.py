@@ -49,7 +49,7 @@ class AnyUrlValue(StrAndUnicode):
         self.type_value = type_value
 
         if url_type_registry.index(type_prefix) is None:
-            raise ValueError("Unsupported AnyUrlValue prefix: {0}".format(type_prefix))
+            raise ValueError("Unsupported AnyUrlValue prefix '{0}'. Supported values are: {1}".format(type_prefix, url_type_registry.keys()))
 
 
     @classmethod
