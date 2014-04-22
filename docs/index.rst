@@ -39,6 +39,7 @@ Contents
 
    installation
    api/index
+   changelog
 
 
 Indices and tables
