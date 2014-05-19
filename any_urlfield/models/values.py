@@ -106,7 +106,7 @@ class AnyUrlValue(StrAndUnicode):
         """
         Check whether the references model still exists.
         """
-        if self.url_type.prefix == 'http':
+        if self.url_type.prefix == 'http' and self.type_value:
             return True
         elif self.url_type.has_id_value:
             Model = self.get_model()
@@ -185,3 +185,11 @@ class AnyUrlValue(StrAndUnicode):
 
     def __getitem__(self, item):
         return unicode(self).__getitem__(item)
+
+
+    def __bool__(self):
+        return bool(self.type_value)
+
+
+    # Python 2 support:
+    __nonzero__ = __bool__

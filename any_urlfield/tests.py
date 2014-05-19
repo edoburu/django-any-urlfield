@@ -96,3 +96,9 @@ class AnyUrlTests(TestCase):
         self.assertIs(v.get_model(), PageModel)
         self.assertRaises(PageModel.DoesNotExist, lambda: v.get_object())
         self.assertFalse(v.exists())
+
+
+    def test_bool_empty(self):
+        x = AnyUrlValue.from_db_value('')
+        self.assertFalse(1 if x else 0)
+        self.assertFalse(x.exists())
