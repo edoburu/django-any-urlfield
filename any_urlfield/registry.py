@@ -12,7 +12,7 @@ class UrlType(object):
         if form_field is None:
             # Generate default form field if nothing is provided.
             if has_id_value:
-                form_field = forms.ModelChoiceField(queryset=model._default_manager.all(), widget=widget)
+                form_field = lambda: forms.ModelChoiceField(queryset=model._default_manager.all(), widget=widget)
             else:
                 form_field = forms.CharField(widget=widget)
 
