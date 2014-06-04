@@ -66,7 +66,7 @@ class AnyUrlField(forms.MultiValueField):
                     if isinstance(value, Model):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
-                        value = long(value)
+                        value = int(value)
                     else:
                         return None
                 return AnyUrlValue(type_prefix, value, self.url_type_registry)
@@ -105,7 +105,7 @@ class AnyUrlField(forms.MultiValueField):
 
                 try:
                     clean_data.append(field.clean(field_value))
-                except ValidationError, e:
+                except ValidationError as e:
                     errors.extend(e.messages)  # Collect all widget errors
             if errors:
                 raise ValidationError(errors)
