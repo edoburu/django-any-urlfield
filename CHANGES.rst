@@ -4,6 +4,14 @@ Changelog
 Version 2.0 (in development)
 ----------------------------
 
+Released as 2.0b1:
+~~~~~~~~~~~~~~~~~~
+
+* Improved Python 3 support.
+* Delay initialisation of ``ModelChoiceField`` objects.
+* Fix ``exists()`` value for empty URLs
+
+
 Released as 2.0a1:
 ~~~~~~~~~~~~~~~~~~
 
