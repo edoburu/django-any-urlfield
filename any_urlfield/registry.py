@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # Avoid using common protocol names as prefix, this could clash in the future.
 # Values starting with such prefix should be handled as external URL.
-
 _invalid_prefixes = ('http', 'https', 'ftp', 'ftps', 'sftp', 'webdav', 'webdavs', 'afp', 'smb', 'git', 'svn', 'hg')
 
 
