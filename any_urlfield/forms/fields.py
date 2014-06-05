@@ -8,8 +8,13 @@ from django.core.exceptions import ValidationError
 from django.db.models.base import Model, django
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
+from django.utils import six
 from any_urlfield.forms.widgets import AnyUrlWidget
 from any_urlfield.models.values import AnyUrlValue
+
+
+if six.PY3:
+    long = int
 
 
 class AnyUrlField(forms.MultiValueField):
@@ -105,7 +110,7 @@ class AnyUrlField(forms.MultiValueField):
 
                 try:
                     clean_data.append(field.clean(field_value))
-                except ValidationError, e:
+                except ValidationError as e:
                     errors.extend(e.messages)  # Collect all widget errors
             if errors:
                 raise ValidationError(errors)

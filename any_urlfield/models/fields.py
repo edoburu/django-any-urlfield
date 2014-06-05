@@ -1,6 +1,7 @@
 """
 Custom model fields to link to CMS content.
 """
+from django.utils import six
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
@@ -93,7 +94,7 @@ class AnyUrlField(models.CharField):
 
 
     def get_prep_value(self, value):
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             # Happens with south migration
             return value
         elif value is None:

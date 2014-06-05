@@ -10,7 +10,10 @@ from django.forms import widgets
 from django.forms.util import flatatt
 from django.forms.widgets import RadioFieldRenderer
 from django.template.defaultfilters import slugify
-from django.utils.encoding import force_unicode
+try:
+    from django.utils.encoding import force_unicode
+except ImportError:
+    from django.utils.encoding import force_text as force_unicode
 from django.utils.safestring import mark_safe
 
 
