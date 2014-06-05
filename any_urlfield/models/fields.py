@@ -1,7 +1,7 @@
 """
 Custom model fields to link to CMS content.
 """
-import six
+from django.utils import six
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models

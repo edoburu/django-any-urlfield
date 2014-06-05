@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # Avoid using common protocol names as prefix, this could clash in the future.
 # Values starting with such prefix should be handled as external URL.
-import collections
 
 _invalid_prefixes = ('http', 'https', 'ftp', 'ftps', 'sftp', 'webdav', 'webdavs', 'afp', 'smb', 'git', 'svn', 'hg')
 
@@ -31,7 +30,7 @@ class UrlType(object):
         """
         Create the form field for the URL type.
         """
-        if isinstance(self.form_field, collections.Callable):
+        if callable(self.form_field):
             return self.form_field()
         else:
             return self.form_field

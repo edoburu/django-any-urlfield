@@ -8,8 +8,13 @@ from django.core.exceptions import ValidationError
 from django.db.models.base import Model, django
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
+from django.utils import six
 from any_urlfield.forms.widgets import AnyUrlWidget
 from any_urlfield.models.values import AnyUrlValue
+
+
+if six.PY3:
+    long = int
 
 
 class AnyUrlField(forms.MultiValueField):
@@ -66,7 +71,7 @@ class AnyUrlField(forms.MultiValueField):
                     if isinstance(value, Model):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
-                        value = int(value)
+                        value = long(value)
                     else:
                         return None
                 return AnyUrlValue(type_prefix, value, self.url_type_registry)
