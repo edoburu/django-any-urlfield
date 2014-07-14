@@ -7,7 +7,7 @@ import re
 import sys
 
 # When creating the sdist, make sure the django.mo file also exists:
-if 'sdist' in sys.argv:
+if 'sdist' in sys.argv or 'develop' in sys.argv:
     try:
         os.chdir('any_urlfield')
         from django.core.management.commands.compilemessages import compile_messages
