@@ -9,5 +9,6 @@
 .idea/workspace.xml
 .DS_Store
 .tox/
+build/
 dist/
 docs/_build/
