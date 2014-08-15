@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 2.0 (in development)
-----------------------------
+Version 2.0
+-----------
 
 Released as 2.0b1:
 ~~~~~~~~~~~~~~~~~~
