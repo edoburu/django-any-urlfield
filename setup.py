@@ -32,7 +32,7 @@ def find_version(*parts):
 setup(
     name='django-any-urlfield',
     version=find_version('any_urlfield', '__init__.py'),
-    license='Apache License, Version 2.0',
+    license='Apache 2.0',
 
     requires=[
         'Django (>=1.3)',   # Using staticfiles
