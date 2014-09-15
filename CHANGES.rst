@@ -4,6 +4,9 @@ Changelog
 Version 2.1 (in development)
 ----------------------------
 
+Released as 2.1a1:
+~~~~~~~~~~~~~~~~~~
+
 * Added caching support for URL values.
 * Fix performance issue with form fields.
 
