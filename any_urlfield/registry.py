@@ -45,8 +45,10 @@ class UrlType(object):
 
         # Widget instantiation needs to happen manually.
         # Auto skip if choices is not an existing attribute.
-        if getattr(form_field, 'choices', None) and getattr(widget, 'choices', None):
-            widget.choices = form_field.choices
+        form_field_choices = getattr(form_field, 'choices', None)
+        if form_field_choices is not None:
+            if hasattr(widget, 'choices'):
+                widget.choices = form_field_choices
         return widget
 
 

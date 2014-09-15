@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.0.1
+-------------
+
+* Fix performance issue with form fields.
+
+
 Version 2.0
 -----------
 
