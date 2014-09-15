@@ -8,6 +8,11 @@ Released as 2.1a1:
 ~~~~~~~~~~~~~~~~~~
 
 * Added caching support for URL values.
+
+
+Version 2.0.1
+-------------
+
 * Fix performance issue with form fields.
 
 
