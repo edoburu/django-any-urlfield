@@ -1,5 +1,7 @@
 from django import forms
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from any_urlfield.cache import get_object_cache_keys
 
 
 # Avoid using common protocol names as prefix, this could clash in the future.
@@ -94,6 +96,7 @@ class UrlTypeRegistry(object):
             raise ValueError("Provide either a form_field or widget; use the widget parameter of the form field instead.")
 
         urltype = UrlType(ModelClass, form_field, widget, title, prefix, has_id_value)
+        signals.post_save.connect(_on_model_save, sender=ModelClass)
         self._url_types.append(urltype)
         return urltype
 
@@ -137,3 +140,11 @@ class UrlTypeRegistry(object):
         Return the available url type prefixes.
         """
         return [urltype.prefix for urltype in self._url_types]
+
+
+def _on_model_save(instance, **kwargs):
+    """
+    Called when a model is saved.
+    """
+    for cache_key in get_object_cache_keys(instance):
+        cache.delete(cache_key)

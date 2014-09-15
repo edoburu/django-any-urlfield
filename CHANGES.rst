@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.1 (in development)
+----------------------------
+
+* Added caching support for URL values.
+
+
 Version 2.0
 -----------
 

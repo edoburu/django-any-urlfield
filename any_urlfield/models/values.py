@@ -2,10 +2,12 @@
 Custom data objects
 """
 from __future__ import unicode_literals
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.loading import get_model
 from django.utils.encoding import StrAndUnicode
 import logging
+from any_urlfield.cache import get_urlfield_cache_key
 
 try:
     from django.utils import six
@@ -17,6 +19,9 @@ except ImportError:
 
 
 logger = logging.getLogger('any_urlfield.models')
+
+# Not really sure about the cache invalidation yet
+URL_CACHE_TIMEOUT = 3600   # 1 hour
 
 
 class AnyUrlValue(StrAndUnicode):
@@ -159,10 +164,18 @@ class AnyUrlValue(StrAndUnicode):
             if not self.type_value:
                 return ""
 
+            # First see if the URL is cached
             Model = self.get_model()
+            cache_key = get_urlfield_cache_key(Model, self.type_value)
+            url = cache.get(cache_key)
+            if url:
+                return url
+
             try:
                 object = Model.objects.get(pk=self.type_value)
-                return object.get_absolute_url()
+                url = object.get_absolute_url()
+                cache.set(cache_key, url, URL_CACHE_TIMEOUT)
+                return url
             except ObjectDoesNotExist as e:
                 # Silently fail in templates. Avoid full page crashing.
                 logger.exception("Failed to generate URL for {0}".format(repr(self)))
