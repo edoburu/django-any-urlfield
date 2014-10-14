@@ -5,7 +5,8 @@ from __future__ import unicode_literals
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.loading import get_model
-from django.utils.encoding import StrAndUnicode
+from django.utils.encoding import python_2_unicode_compatible
+
 import logging
 from any_urlfield.cache import get_urlfield_cache_key
 
@@ -24,7 +25,8 @@ logger = logging.getLogger('any_urlfield.models')
 URL_CACHE_TIMEOUT = 3600   # 1 hour
 
 
-class AnyUrlValue(StrAndUnicode):
+@python_2_unicode_compatible
+class AnyUrlValue(object):
     """
     Custom value object for the :class:`~any_urlfield.models.AnyUrlField`.
     This value holds both the internal page ID, and external URL.
@@ -155,8 +157,8 @@ class AnyUrlValue(StrAndUnicode):
         return self.url_type.prefix
 
 
-    # Python 3 support comes from StrAndUnicode
-    def __unicode__(self):
+    # Python 2 unicode support comes from  python_2_unicode_compatible class decorator
+    def __str__(self):
         """
         Return the URL that the value points to.
         """
