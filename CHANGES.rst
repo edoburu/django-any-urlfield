@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.0.2
+-------------
+
+* Added pickle support.
+
+
 Version 2.0.1
 -------------
 
