@@ -210,12 +210,14 @@ class AnyUrlValue(object):
 
 
     def __eq__(self, other):
-        return self.url_type == other.url_type \
+        return isinstance(other, AnyUrlValue) \
+           and self.url_type == other.url_type \
            and self.type_value == other.type_value
 
 
     def __ne__(self, other):
-        return self.url_type != other.url_type \
+        return not isinstance(other, AnyUrlValue) \
+            or self.url_type != other.url_type \
             or self.type_value != other.type_value
 
 

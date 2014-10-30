@@ -37,12 +37,14 @@ class UrlType(object):
 
     def __eq__(self, other):
         # Skipping title and form_field
-        return self.model == other.model \
+        return isinstance(other, UrlType) \
+           and self.model == other.model \
            and self.prefix == other.prefix \
            and self.has_id_value == other.has_id_value
 
     def __ne__(self, other):
-        return self.model != other.model \
+        return not isinstance(other, UrlType) \
+            or self.model != other.model \
             or self.prefix != other.prefix \
             or self.has_id_value != other.has_id_value
 

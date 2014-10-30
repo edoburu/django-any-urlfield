@@ -10,6 +10,12 @@ Released as 2.1a1:
 * Added caching support for URL values.
 
 
+Version 2.0.3
+-------------
+
+* Fixed ``__eq__()`` for comparing against other object types.
+
+
 Version 2.0.2
 -------------
 
