@@ -35,6 +35,17 @@ class UrlType(object):
         dict['form_field'] = self.get_form_field()
         return dict
 
+    def __eq__(self, other):
+        # Skipping title and form_field
+        return self.model == other.model \
+           and self.prefix == other.prefix \
+           and self.has_id_value == other.has_id_value
+
+    def __ne__(self, other):
+        return self.model != other.model \
+            or self.prefix != other.prefix \
+            or self.has_id_value != other.has_id_value
+
     def get_form_field(self):
         """
         Create the form field for the URL type.
@@ -118,6 +129,10 @@ class UrlTypeRegistry(object):
     def __eq__(self, other):
         # For __getstate__ logic
         return self._url_types == other._url_types
+
+
+    def __ne__(self, other):
+        return self._url_types != other._url_types
 
 
     # Accessing API is similar to `list` and '`dict`:

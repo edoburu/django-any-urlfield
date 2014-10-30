@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import pickle
 from django.db import models
 from django.test import TestCase
 from any_urlfield.models import AnyUrlField, AnyUrlValue
@@ -9,6 +10,11 @@ try:
     unicode = six.text_type
 except ImportError:
     pass  # Python 2, Django 1.3
+
+try:
+    from StringIO import StringIO       # Python 2
+except ImportError:
+    from io import BytesIO as StringIO  # Python 3
 
 
 class TestModel(models.Model):
@@ -90,6 +96,8 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.to_db_value(), 'any_urlfield.pagemodel://999999')
 
         # Frontend
+        from any_urlfield.models.values import logger
+        logger.warning("NOTE: The following statement will cause a log to output")
         self.assertEqual(unicode(v), "#DoesNotExist")       # Avoids frontend errors
 
         # Programmer API's
@@ -102,3 +110,31 @@ class AnyUrlTests(TestCase):
         x = AnyUrlValue.from_db_value('')
         self.assertFalse(1 if x else 0)
         self.assertFalse(x.exists())
+
+
+    def test_pickle(self):
+        # See if regular fields can be pickled
+        v1 = AnyUrlValue.from_db_value("http://www.example.com/")
+        out = StringIO()
+        pickle.dump(v1, out)
+
+        # Unpickle.
+        out.seek(0)
+        v2 = pickle.load(out)
+        self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue
+
+
+    def test_pickle_registry(self):
+        reg = UrlTypeRegistry()
+        urltype = reg.register(PageModel)
+        page = PageModel.objects.create(slug='foo')
+
+        # See if custom registries can be pickled
+        v1 = AnyUrlValue(urltype.prefix, page.id, reg)
+        out = StringIO()
+        pickle.dump(v1, out)
+
+        # Unpickle.
+        out.seek(0)
+        v2 = pickle.load(out)
+        self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
