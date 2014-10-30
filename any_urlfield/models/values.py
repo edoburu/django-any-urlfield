@@ -206,3 +206,27 @@ class AnyUrlValue(StrAndUnicode):
 
     # Python 2 support:
     __nonzero__ = __bool__
+
+
+    def __getstate__(self):
+        """
+        Pickle support
+        """
+        # Avoid pickling the registry if it's the shared one.
+        from any_urlfield.models.fields import AnyUrlField
+        if self.url_type_registry != AnyUrlField._static_registry:
+            url_type_registry = self.url_type_registry
+        else:
+            url_type_registry = None
+
+        return (url_type_registry, self.url_type.prefix, self.type_value)
+
+
+    def __setstate__(self, state):
+        url_type_registry, prefix, type_value = state
+
+        if url_type_registry is not None:
+            self.url_type_registry = url_type_registry
+
+        self.url_type = self.url_type_registry[prefix]
+        self.type_value = type_value
