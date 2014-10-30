@@ -90,6 +90,8 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.to_db_value(), 'any_urlfield.pagemodel://999999')
 
         # Frontend
+        from any_urlfield.models.values import logger
+        logger.warning("NOTE: The following statement will cause a log to output")
         self.assertEqual(unicode(v), "#DoesNotExist")       # Avoids frontend errors
 
         # Programmer API's

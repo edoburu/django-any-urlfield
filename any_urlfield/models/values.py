@@ -166,7 +166,7 @@ class AnyUrlValue(object):
                 return object.get_absolute_url()
             except ObjectDoesNotExist as e:
                 # Silently fail in templates. Avoid full page crashing.
-                logger.exception("Failed to generate URL for {0}".format(repr(self)))
+                logger.error("Failed to generate URL for %r: %s", self, e)
                 return "#{0}".format(e.__class__.__name__)
         else:
             return self.type_value or ""
