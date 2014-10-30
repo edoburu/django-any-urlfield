@@ -196,6 +196,16 @@ class AnyUrlValue(object):
     __nonzero__ = __bool__
 
 
+    def __eq__(self, other):
+        return self.url_type == other.url_type \
+           and self.type_value == other.type_value
+
+
+    def __ne__(self, other):
+        return self.url_type != other.url_type \
+            or self.type_value != other.type_value
+
+
     def __getstate__(self):
         """
         Pickle support
@@ -213,8 +223,11 @@ class AnyUrlValue(object):
     def __setstate__(self, state):
         url_type_registry, prefix, type_value = state
 
+        from any_urlfield.models.fields import AnyUrlField
         if url_type_registry is not None:
             self.url_type_registry = url_type_registry
+        else:
+            self.url_type_registry = AnyUrlField._static_registry
 
-        self.url_type = self.url_type_registry[prefix]
         self.type_value = type_value
+        self.url_type = self.url_type_registry[prefix]
