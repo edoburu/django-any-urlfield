@@ -1,3 +1,4 @@
+from types import LambdaType
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -24,6 +25,12 @@ class UrlType(object):
 
     def __repr__(self):
         return "<UrlType {0}>".format(self.prefix)
+
+    def __getstate__(self):
+        # Can't pickle lambda or callable values, so force evaluation
+        dict = self.__dict__.copy()
+        dict['form_field'] = self.get_form_field()
+        return dict
 
     def get_form_field(self):
         """
@@ -102,6 +109,12 @@ class UrlTypeRegistry(object):
 
     def is_external_url_prefix(self, prefix):
         return prefix in _invalid_prefixes
+
+
+    def __eq__(self, other):
+        # For __getstate__ logic
+        return self._url_types == other._url_types
+
 
     # Accessing API is similar to `list` and '`dict`:
 
