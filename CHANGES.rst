@@ -5,6 +5,7 @@ Version 2.0.2
 -------------
 
 * Added pickle support.
+* Fixed Django 1.7 support.
 
 
 Version 2.0.1

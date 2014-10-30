@@ -4,7 +4,7 @@ Custom data objects
 from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.loading import get_model
-from django.utils.encoding import StrAndUnicode
+from django.utils.encoding import python_2_unicode_compatible
 import logging
 
 try:
@@ -19,7 +19,8 @@ except ImportError:
 logger = logging.getLogger('any_urlfield.models')
 
 
-class AnyUrlValue(StrAndUnicode):
+@python_2_unicode_compatible
+class AnyUrlValue(object):
     """
     Custom value object for the :class:`~any_urlfield.models.AnyUrlField`.
     This value holds both the internal page ID, and external URL.
@@ -150,8 +151,8 @@ class AnyUrlValue(StrAndUnicode):
         return self.url_type.prefix
 
 
-    # Python 3 support comes from StrAndUnicode
-    def __unicode__(self):
+    # Python 2 support comes from python_2_unicode_compatible
+    def __str__(self):
         """
         Return the URL that the value points to.
         """
