@@ -9,7 +9,7 @@ from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 
 
-class AnyUrlField(models.CharField):
+class AnyUrlField(six.with_metaclass(models.SubfieldBase, models.CharField)):
     """
     A CharField that can either refer to a CMS page ID, or external URL.
 
@@ -45,7 +45,6 @@ class AnyUrlField(models.CharField):
 
     Now, the ``Article`` model will be displayed as raw input field with a browse button.
     """
-    __metaclass__ = models.SubfieldBase
     _static_registry = UrlTypeRegistry()  # Also accessed by AnyUrlValue as internal field.
 
     def __init__(self, *args, **kwargs):
