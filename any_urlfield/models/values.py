@@ -17,6 +17,9 @@ except ImportError:
     # Python 2, Django 1.3
     string_types = basestring
 
+if six.PY3:
+    long = int
+
 
 logger = logging.getLogger('any_urlfield.models')
 
