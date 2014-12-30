@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.0.4
+-------------
+
+* Fixed Python 3.3 issues
+
+
 Version 2.0.3
 -------------
 
