@@ -10,6 +10,12 @@ Released as 2.1a1:
 * Added caching support for URL values.
 
 
+Version 2.0.4
+-------------
+
+* Fixed Python 3.3 issues
+
+
 Version 2.0.3
 -------------
 
