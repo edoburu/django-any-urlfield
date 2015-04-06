@@ -2,10 +2,11 @@
 Custom form fields for URLs
 """
 import copy
+import django
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.db.models.base import Model, django
+from django.db.models.base import Model
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from django.utils import six
