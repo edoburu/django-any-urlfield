@@ -1,6 +1,7 @@
 """
 Custom model fields to link to CMS content.
 """
+import django
 from django.utils import six
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -121,11 +122,12 @@ class AnyUrlField(six.with_metaclass(models.SubfieldBase, models.CharField)):
                     raise ValidationError(self.error_messages['invalid_choice'] % value.type_value)
 
 
-# Tell South how to create custom fields
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], [
-        "^" + __name__.replace(".", "\.") + "\.AnyUrlField",
-    ])
-except ImportError:
-    pass
+if django.VERSION < (1,7):
+    # Tell South how to create custom fields
+    try:
+        from south.modelsinspector import add_introspection_rules
+        add_introspection_rules([], [
+            "^" + __name__.replace(".", "\.") + "\.AnyUrlField",
+        ])
+    except ImportError:
+        pass
