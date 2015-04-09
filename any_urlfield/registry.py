@@ -179,5 +179,4 @@ def _on_model_save(instance, **kwargs):
     """
     Called when a model is saved.
     """
-    for cache_key in get_object_cache_keys(instance):
-        cache.delete(cache_key)
+    cache.delete_many(get_object_cache_keys(instance))
