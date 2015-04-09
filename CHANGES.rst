@@ -1,8 +1,11 @@
 Changelog
 =========
 
-Version 2.1 (in development)
-----------------------------
+Version 2.1
+-----------
+
+* Added Django 1.8 support
+* Fix importing json fixture data.
 
 Released as 2.1a1:
 ~~~~~~~~~~~~~~~~~~
