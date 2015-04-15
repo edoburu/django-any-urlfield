@@ -17,9 +17,14 @@ except ImportError:
     from io import BytesIO as StringIO  # Python 3
 
 
-class TestModel(models.Model):
+class UrlModel(models.Model):
+    """
+    Example model for testing AnyUrlField
+    """
     url = AnyUrlField()
 
+    def get_absolute_url(self):
+        return str(self.url)
 
 class PageModel(models.Model):
     """
@@ -158,3 +163,9 @@ class AnyUrlTests(TestCase):
         out.seek(0)
         v2 = pickle.load(out)
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
+
+
+    def test_db_pre_save(self):
+        obj = UrlModel(url=AnyUrlValue.from_db_value('http://www.example.org/'))
+        obj.save()
+        self.assertTrue(obj.pk)

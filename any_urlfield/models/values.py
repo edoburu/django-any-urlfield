@@ -115,12 +115,6 @@ class AnyUrlValue(object):
             return AnyUrlValue(prefix, url, url_type_registry)
 
 
-    def prepare_database_save(self, field):
-        # Allow the Django 1.6+ SQL compiler to process this object directly.
-        # This is used when JSON data is imported from a fixture.
-        return self.to_db_value()
-
-
     def to_db_value(self):
         """
         Convert the value into a serialized format which can be stored in the database.

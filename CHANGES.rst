@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.1.1
+-------------
+
+* Fix Django 1.7/1.8 model saving issues.
+
 Version 2.1
 -----------
 
