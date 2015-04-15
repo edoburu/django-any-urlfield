@@ -82,6 +82,14 @@ class AnyUrlField(six.with_metaclass(models.SubfieldBase, models.CharField)):
         return super(AnyUrlField, self).formfield(**kwargs)
 
 
+    def from_db_value(self, value, expression, connection, context):
+        # As of Django 1.8, this method is used to cast DB values to python values.
+        # The call to to_python() is not used anymore.
+        if value is None:
+            return None
+        return AnyUrlValue.from_db_value(value, self._static_registry)
+
+
     def to_python(self, value):
         if isinstance(value, AnyUrlValue):
             return value
