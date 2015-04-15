@@ -5,6 +5,7 @@ Version 2.1.1
 -------------
 
 * Fix Django 1.7/1.8 model saving issues.
+* Added ``AnyUrlValue.from_model()`` to directly wrap a model into an ``AnyUrlValue``.
 
 Version 2.1
 -----------
