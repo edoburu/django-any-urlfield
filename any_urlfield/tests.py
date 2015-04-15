@@ -22,10 +22,21 @@ class TestModel(models.Model):
 
 
 class PageModel(models.Model):
+    """
+    Example model to be linking to.
+    """
     slug = models.SlugField()
 
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
+
+class RegPageModel(models.Model):
+    slug = models.SlugField()
+
+    def get_absolute_url(self):
+        return '/{0}/'.format(self.slug)
+
+AnyUrlField.register_model(RegPageModel)
 
 
 class AnyUrlTests(TestCase):
@@ -34,6 +45,15 @@ class AnyUrlTests(TestCase):
         reg = UrlTypeRegistry()
         self.assertIsNotNone(reg['http'])
         self.assertIsNotNone(reg['https'])
+
+
+    def test_from_model(self):
+        page2 = RegPageModel.objects.create(pk=1, slug='foo2')
+        v = AnyUrlValue.from_model(page2)
+
+        self.assertEqual(v.url_type.prefix, 'any_urlfield.regpagemodel')   # app_label.modelname
+        self.assertEqual(v.type_value, page2.id)
+        self.assertEqual(v.to_db_value(), 'any_urlfield.regpagemodel://1')
 
 
     def test_from_dbvalue(self):

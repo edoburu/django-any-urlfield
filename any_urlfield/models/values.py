@@ -62,6 +62,23 @@ class AnyUrlValue(object):
 
 
     @classmethod
+    def from_model(cls, model, url_type_registry=None):
+        """
+        Convert a model value to this object.
+        """
+        # Easy configuration, allowing other code to deserialize database values.
+        if url_type_registry is None:
+            from any_urlfield.models.fields import AnyUrlField
+            url_type_registry = AnyUrlField._static_registry
+
+        url_type = url_type_registry.get_for_model(model.__class__)
+        if url_type is None:
+            raise ValueError("Unregistered model for AnyUrlValue: {0}".format(model.__class__))
+
+        return cls(url_type.prefix, model.pk, url_type_registry)
+
+
+    @classmethod
     def from_db_value(cls, url, url_type_registry=None):
         """
         Convert a serialized database value to this object.

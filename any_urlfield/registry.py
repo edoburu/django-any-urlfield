@@ -143,6 +143,16 @@ class UrlTypeRegistry(object):
         return iter(self._url_types)
 
 
+    def get_for_model(self, ModelClass):
+        """
+        Return the URL type for a given model class
+        """
+        for urltype in self._url_types:
+            if urltype.model is ModelClass:
+                return urltype
+        return None
+
+
     def __getitem__(self, prefix):
         # Any web domain will be handled by the standard URLField.
         if self.is_external_url_prefix(prefix):
