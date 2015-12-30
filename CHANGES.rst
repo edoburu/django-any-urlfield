@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 2.2
+-----------
+
+* Added Django 1.9 support
+* Fixed saving blank/null values.
+
 Version 2.1.1
 -------------
 
