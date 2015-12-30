@@ -7,14 +7,20 @@ from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
-from django.forms.util import flatatt
 from django.forms.widgets import RadioFieldRenderer
 from django.template.defaultfilters import slugify
+from django.utils.safestring import mark_safe
+
 try:
     from django.utils.encoding import force_unicode
 except ImportError:
     from django.utils.encoding import force_text as force_unicode
-from django.utils.safestring import mark_safe
+
+try:
+    from django.forms.utils import flatatt  # Django 1.7+
+except ImportError:
+    from django.forms.util import flatatt
+
 
 
 class HorizontalRadioFieldRenderer(RadioFieldRenderer):

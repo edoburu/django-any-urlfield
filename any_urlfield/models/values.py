@@ -4,10 +4,15 @@ Custom data objects
 from __future__ import unicode_literals
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.loading import get_model
 from django.utils.encoding import python_2_unicode_compatible
 import logging
 from any_urlfield.cache import get_urlfield_cache_key
+
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
 
 try:
     from django.utils import six
