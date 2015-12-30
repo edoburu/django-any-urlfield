@@ -116,7 +116,10 @@ class AnyUrlField(six.with_metaclass(models.SubfieldBase, models.CharField)):
         # Make sure that the SQL compiler in Django 1.6/1.7 doesn't get a AnyUrlValue,
         # but a regular 'str' object it can write to the database.
         value = super(AnyUrlField, self).pre_save(model_instance, add)
-        return value.to_db_value()
+        if value is None:
+            return None
+        else:
+            return value.to_db_value()
 
 
     def value_to_string(self, obj):
