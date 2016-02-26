@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 2.2.1
+-------------
+
+* Fixed Django 1.10 deprecation warnings.
+
 Version 2.2
 -----------
 
