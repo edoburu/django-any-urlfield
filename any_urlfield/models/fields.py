@@ -9,8 +9,13 @@ from django.db import models
 from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 
+if django.VERSION < (1, 8):
+    base_class = six.with_metaclass(models.SubfieldBase, models.CharField)
+else:
+    base_class = models.CharField
 
-class AnyUrlField(six.with_metaclass(models.SubfieldBase, models.CharField)):
+
+class AnyUrlField(base_class):
     """
     A CharField that can either refer to a CMS page ID, or external URL.
 
