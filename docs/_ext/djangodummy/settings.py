@@ -6,3 +6,6 @@
 
 # Display proper URLs in the docs:
 STATIC_URL = '/static/'
+
+# For Django 1.8+
+SECRET_KEY = 'docs'
