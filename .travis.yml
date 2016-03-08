@@ -1,4 +1,5 @@
 language: python
+sudo: false
 python:
   - "2.6"
   - "2.7"
@@ -21,11 +22,15 @@ matrix:
   - python: "2.6"
     env: DJANGO=1.8.0
 
+before_install:
+  - pip install codecov
 install:
-  - pip install -q Django==$DJANGO --use-mirrors
-  - pip install -q -e . --use-mirrors
+  - pip install Django==$DJANGO
+  - pip install -e .
 script:
-  - python runtests.py
+  - coverage run --source=any_urlfield runtests.py
+after_script:
+  - codecov
 
 branches:
   only:
