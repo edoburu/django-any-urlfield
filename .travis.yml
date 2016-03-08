@@ -3,7 +3,6 @@ sudo: false
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
 env:
   - DJANGO=1.4.2
@@ -13,8 +12,6 @@ env:
   - DJANGO=1.8.0
 matrix:
   exclude:
-  - python: "3.2"
-    env: DJANGO=1.4.2
   - python: "3.3"
     env: DJANGO=1.4.2
   - python: "2.6"
