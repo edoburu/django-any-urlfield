@@ -3,6 +3,7 @@
 *.mo
 *.db
 *.egg-info/
+.coverage
 .project
 .idea/
 .pydevproject
