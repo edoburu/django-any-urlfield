@@ -102,5 +102,5 @@ please let us know as well because we will look into it.
 Pull requests are welcome too. :-)
 
 
-.. _documentation: http://django-any-urlfield.readthedocs.org/
+.. _documentation: https://django-any-urlfield.readthedocs.io/
 
