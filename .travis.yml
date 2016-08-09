@@ -5,26 +5,24 @@ python:
 - '2.7'
 - '3.4'
 env:
-- DJANGO="django>=1.4.0,<1.5.0"
-- DJANGO="django>=1.5.0,<1.6.0"
-- DJANGO="django>=1.6.0,<1.7.0"
-- DJANGO="django>=1.7.0,<1.8.0"
-- DJANGO="django>=1.8.0,<1.9.0"
-- DJANGO="django>=1.9.0,<1.10.0"
-- DJANGO="django>=1.10.0,<1.11.0"
+- PACKAGES="django>=1.4.0,<1.5.0"
+- PACKAGES="django>=1.5.0,<1.6.0"
+- PACKAGES="django>=1.6.0,<1.7.0"
+- PACKAGES="django>=1.7.0,<1.8.0"
+- PACKAGES="django>=1.8.0,<1.9.0"
+- PACKAGES="django>=1.9.0,<1.10.0"
+- PACKAGES="django>=1.10.0,<1.11.0"
 matrix:
   exclude:
   - python: "3.4"
-    env: DJANGO=">=1.4,<1.5"
-  - python: "3.4"
-    env: DJANGO=">=1.9,<1.10"
+    env: PACKAGES="django>=1.4.0,<1.5.0"
   allow_failures:
   - env: PACKAGES="django>=1.10,<1.11"
 before_install:
 - pip install codecov
 install:
 - pip install -U pip wheel
-- travis_retry pip install $DJANGO -e .
+- travis_retry pip install $PACKAGES -e .
 script:
 - coverage run --source=any_urlfield runtests.py
 after_success:
