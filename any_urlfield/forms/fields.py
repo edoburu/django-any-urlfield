@@ -31,7 +31,6 @@ class AnyUrlField(forms.MultiValueField):
     """
     widget = AnyUrlWidget
 
-
     def __init__(self, url_type_registry, max_length=None, *args, **kwargs):
         self.url_type_registry = url_type_registry  # UrlTypeRegistry object
 
@@ -54,7 +53,6 @@ class AnyUrlField(forms.MultiValueField):
         widget = self.widget(url_type_registry=url_type_registry)
         kwargs['widget'] = widget
         super(AnyUrlField, self).__init__(fields, *args, **kwargs)
-
 
     def compress(self, data_list):
         if data_list:
@@ -81,7 +79,6 @@ class AnyUrlField(forms.MultiValueField):
                         return None
                 return AnyUrlValue(type_prefix, value, self.url_type_registry)
         return None
-
 
     def clean(self, value):
         # Get the value
@@ -125,7 +122,7 @@ class AnyUrlField(forms.MultiValueField):
         self.validate(out)
         return out
 
-    if django.VERSION < (1,7):
+    if django.VERSION < (1, 7):
         # ModelChoiceField.__deepcopy__ was skipped because this object didn't deepcopy the fields.
         # That causes issues when the queryset needs to be reevaluated (e.g. for queries with a SITE_ID threadlocal).
 

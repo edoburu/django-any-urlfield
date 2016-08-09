@@ -52,6 +52,7 @@ class AnyUrlValue(object):
 
         {{ mymodel.url }}
     """
+
     def __init__(self, type_prefix, type_value, url_type_registry=None):
         # Easy configuration, allowing other code to deserialize database values.
         if url_type_registry is None:
@@ -64,7 +65,6 @@ class AnyUrlValue(object):
 
         if url_type_registry.index(type_prefix) is None:
             raise ValueError("Unsupported AnyUrlValue prefix '{0}'. Supported values are: {1}".format(type_prefix, url_type_registry.keys()))
-
 
     @classmethod
     def from_model(cls, model, url_type_registry=None):
@@ -81,7 +81,6 @@ class AnyUrlValue(object):
             raise ValueError("Unregistered model for AnyUrlValue: {0}".format(model.__class__))
 
         return cls(url_type.prefix, model.pk, url_type_registry)
-
 
     @classmethod
     def from_db_value(cls, url, url_type_registry=None):
@@ -119,7 +118,6 @@ class AnyUrlValue(object):
         else:
             return AnyUrlValue(prefix, url, url_type_registry)
 
-
     def to_db_value(self):
         """
         Convert the value into a serialized format which can be stored in the database.
@@ -131,7 +129,6 @@ class AnyUrlValue(object):
             return None  # avoid app.model://None
         else:
             return "{0}://{1}".format(self.url_type.prefix, self.type_value)
-
 
     def exists(self):
         """
@@ -149,7 +146,6 @@ class AnyUrlValue(object):
             # None or empty.
             return False
 
-
     def get_model(self):
         """
         Return the model that this value points to.
@@ -159,7 +155,6 @@ class AnyUrlValue(object):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
             Model = get_model(app_label, model_name)
         return Model
-
 
     def get_object(self):
         """
@@ -171,7 +166,6 @@ class AnyUrlValue(object):
         else:
             return None
 
-
     @property
     def type_prefix(self):
         """
@@ -179,7 +173,6 @@ class AnyUrlValue(object):
         For external URLs this is always ``"http"``.
         """
         return self.url_type.prefix
-
 
     # Python 2 support comes from python_2_unicode_compatible
     def __str__(self):
@@ -209,42 +202,33 @@ class AnyUrlValue(object):
         else:
             return self.type_value or ""
 
-
     def __len__(self):
         return len(unicode(self))
-
 
     def __repr__(self):
         return str("<AnyUrlValue '{0}'>".format(self.to_db_value()))
 
-
     def __getattr__(self, item):
         return getattr(unicode(self), item)
-
 
     def __getitem__(self, item):
         return unicode(self).__getitem__(item)
 
-
     def __bool__(self):
         return bool(self.type_value)
-
 
     # Python 2 support:
     __nonzero__ = __bool__
 
-
     def __eq__(self, other):
         return isinstance(other, AnyUrlValue) \
-           and self.url_type == other.url_type \
-           and self.type_value == other.type_value
-
+            and self.url_type == other.url_type \
+            and self.type_value == other.type_value
 
     def __ne__(self, other):
         return not isinstance(other, AnyUrlValue) \
             or self.url_type != other.url_type \
             or self.type_value != other.type_value
-
 
     def __getstate__(self):
         """
@@ -258,7 +242,6 @@ class AnyUrlValue(object):
             url_type_registry = None
 
         return (url_type_registry, self.url_type.prefix, self.type_value)
-
 
     def __setstate__(self, state):
         url_type_registry, prefix, type_value = state

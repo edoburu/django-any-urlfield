@@ -22,7 +22,6 @@ except ImportError:
     from django.forms.util import flatatt
 
 
-
 class HorizontalRadioFieldRenderer(RadioFieldRenderer):
     """
     Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
@@ -34,6 +33,7 @@ class HorizontalRadioFieldRenderer(RadioFieldRenderer):
 
         widget = widgets.RadioSelect(choices=choices, renderer=HorizontalRadioFieldRenderer)
     """
+
     def __init__(self, name, value, attrs, choices):
         extraclasses = 'radiolist inline'
         if 'class' in attrs:
@@ -59,7 +59,6 @@ class AnyUrlWidget(widgets.MultiWidget):
         js = ('any_urlfield/any_urlfield.js',)
         css = {'all': ('any_urlfield/any_urlfield.css',)}
 
-
     def __init__(self, url_type_registry, attrs=None):
         type_choices = [(urltype.prefix, urltype.title) for urltype in url_type_registry]
 
@@ -78,7 +77,6 @@ class AnyUrlWidget(widgets.MultiWidget):
 
         # init MultiWidget base
         super(AnyUrlWidget, self).__init__(subwidgets, attrs=attrs)
-
 
     def decompress(self, value):
         # Split the value to a dictionary with key per prefix.
@@ -109,14 +107,13 @@ class AnyUrlWidget(widgets.MultiWidget):
                 initial = [u'http', u'', u'', u'']
             return super(AnyUrlWidget, self)._has_changed(initial, data)
 
-
     def format_output(self, rendered_widgets):
         """
         Custom rendering of the widgets.
         """
         urltypes = list(self.url_type_registry)
         url_type_html = rendered_widgets.pop(0)
-        output = [ url_type_html ]
+        output = [url_type_html]
 
         # Wrap remaining options in <p> for scripting.
         for i, widget_html in enumerate(rendered_widgets):
@@ -140,6 +137,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
 
         widget = SimpleRawIdWidget(MyModel)
     """
+
     def __init__(self, model, limit_choices_to=None, admin_site=None, attrs=None, using=None):
         """
         Instantiate the class.
@@ -149,7 +147,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
         else:
             rel = ManyToOneRel(model, model._meta.pk.name, limit_choices_to=limit_choices_to)
 
-        if django.VERSION < (1,4):
+        if django.VERSION < (1, 4):
             super(SimpleRawIdWidget, self).__init__(rel=rel, attrs=attrs, using=using)
         else:
             # admin_site was added in Django 1.4, fixing the popup URL for the change list.

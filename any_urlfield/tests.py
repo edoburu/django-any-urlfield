@@ -29,6 +29,7 @@ class UrlModel(models.Model):
     def get_absolute_url(self):
         return str(self.url)
 
+
 class PageModel(models.Model):
     """
     Example model to be linking to.
@@ -37,6 +38,7 @@ class PageModel(models.Model):
 
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
+
 
 class RegPageModel(models.Model):
     slug = models.SlugField()
@@ -54,7 +56,6 @@ class AnyUrlTests(TestCase):
         self.assertIsNotNone(reg['http'])
         self.assertIsNotNone(reg['https'])
 
-
     def test_from_model(self):
         page2 = RegPageModel.objects.create(pk=1, slug='foo2')
         v = AnyUrlValue.from_model(page2)
@@ -62,7 +63,6 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.url_type.prefix, 'any_urlfield.regpagemodel')   # app_label.modelname
         self.assertEqual(v.type_value, page2.id)
         self.assertEqual(v.to_db_value(), 'any_urlfield.regpagemodel://1')
-
 
     def test_from_dbvalue(self):
         reg = UrlTypeRegistry()
@@ -72,7 +72,6 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "http://www.example.com/")
         self.assertEqual(unicode(v), "http://www.example.com/")
 
-
     def test_from_dbvalue_https(self):
         reg = UrlTypeRegistry()
 
@@ -81,7 +80,6 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "https://www.example.com/")
         self.assertEqual(unicode(v), "https://www.example.com/")
 
-
     def test_from_dbvalue_ftps(self):
         reg = UrlTypeRegistry()
 
@@ -89,7 +87,6 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "ftps://www.example.com/")
         self.assertEqual(unicode(v), "ftps://www.example.com/")
-
 
     def test_from_db_value_id(self):
         reg = UrlTypeRegistry()
@@ -113,7 +110,6 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.get_object(), page)
         self.assertTrue(v.exists())
 
-
     def test_invalid_db_id(self):
         reg = UrlTypeRegistry()
         urltype = reg.register(PageModel)
@@ -133,12 +129,10 @@ class AnyUrlTests(TestCase):
         self.assertRaises(PageModel.DoesNotExist, lambda: v.get_object())
         self.assertFalse(v.exists())
 
-
     def test_bool_empty(self):
         x = AnyUrlValue.from_db_value('')
         self.assertFalse(1 if x else 0)
         self.assertFalse(x.exists())
-
 
     def test_pickle(self):
         # See if regular fields can be pickled
@@ -150,7 +144,6 @@ class AnyUrlTests(TestCase):
         out.seek(0)
         v2 = pickle.load(out)
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue
-
 
     def test_pickle_registry(self):
         reg = UrlTypeRegistry()
@@ -167,12 +160,10 @@ class AnyUrlTests(TestCase):
         v2 = pickle.load(out)
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
 
-
     def test_db_pre_save(self):
         obj = UrlModel(url=AnyUrlValue.from_db_value('http://www.example.org/'))
         obj.save()
         self.assertTrue(obj.pk)
-
 
     def test_dumpdata(self):
         """
@@ -186,7 +177,6 @@ class AnyUrlTests(TestCase):
         json_data = serializers.serialize("json", UrlModel.objects.all())
         data = json.loads(json_data)
         self.assertEqual(data, [{"fields": {"url": "any_urlfield.regpagemodel://1"}, "model": "any_urlfield.urlmodel", "pk": 1}])
-
 
     def test_loaddata(self):
         """
@@ -202,7 +192,6 @@ class AnyUrlTests(TestCase):
         value = obj.url
         self.assertEqual(value.type_prefix, 'any_urlfield.regpagemodel')
         self.assertEqual(value.type_value, 999999)
-
 
     def test_loaddata_exception(self):
         """

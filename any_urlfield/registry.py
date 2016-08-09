@@ -12,6 +12,7 @@ _invalid_prefixes = ('http', 'https', 'ftp', 'ftps', 'sftp', 'webdav', 'webdavs'
 
 
 class UrlType(object):
+
     def __init__(self, model, form_field, widget, title, prefix, has_id_value):
         if form_field is None:
             # Generate default form field if nothing is provided.
@@ -38,9 +39,9 @@ class UrlType(object):
     def __eq__(self, other):
         # Skipping title and form_field
         return isinstance(other, UrlType) \
-           and self.model == other.model \
-           and self.prefix == other.prefix \
-           and self.has_id_value == other.has_id_value
+            and self.model == other.model \
+            and self.prefix == other.prefix \
+            and self.has_id_value == other.has_id_value
 
     def __ne__(self, other):
         return not isinstance(other, UrlType) \
@@ -75,7 +76,6 @@ class UrlType(object):
         return widget
 
 
-
 class UrlTypeRegistry(object):
     """
     Registration backend to administrate the various types.
@@ -90,7 +90,6 @@ class UrlTypeRegistry(object):
             prefix='http',   # no https needed, 'http' is a special constant.
             has_id_value=False
         )]
-
 
     def register(self, ModelClass, form_field=None, widget=None, title=None, prefix=None, has_id_value=True):
         """
@@ -123,25 +122,20 @@ class UrlTypeRegistry(object):
         self._url_types.append(urltype)
         return urltype
 
-
     def is_external_url_prefix(self, prefix):
         return prefix in _invalid_prefixes
-
 
     def __eq__(self, other):
         # For __getstate__ logic
         return self._url_types == other._url_types
 
-
     def __ne__(self, other):
         return self._url_types != other._url_types
-
 
     # Accessing API is similar to `list` and '`dict`:
 
     def __iter__(self):
         return iter(self._url_types)
-
 
     def get_for_model(self, ModelClass):
         """
@@ -152,7 +146,6 @@ class UrlTypeRegistry(object):
                 return urltype
         return None
 
-
     def __getitem__(self, prefix):
         # Any web domain will be handled by the standard URLField.
         if self.is_external_url_prefix(prefix):
@@ -162,7 +155,6 @@ class UrlTypeRegistry(object):
             if urltype.prefix == prefix:
                 return urltype
         return None
-
 
     def index(self, prefix):
         """
@@ -176,7 +168,6 @@ class UrlTypeRegistry(object):
             if urltype.prefix == prefix:
                 return i
         return None
-
 
     def keys(self):
         """

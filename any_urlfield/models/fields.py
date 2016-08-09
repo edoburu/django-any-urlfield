@@ -58,7 +58,6 @@ class AnyUrlField(base_class):
             kwargs['max_length'] = 300
         super(AnyUrlField, self).__init__(*args, **kwargs)
 
-
     @classmethod
     def register_model(cls, ModelClass, form_field=None, widget=None, title=None, prefix=None):
         """
@@ -75,7 +74,6 @@ class AnyUrlField(base_class):
         """
         cls._static_registry.register(ModelClass, form_field, widget, title, prefix)
 
-
     def formfield(self, **kwargs):
         # Associate formfield.
         # Import locally to avoid circular references.
@@ -86,14 +84,12 @@ class AnyUrlField(base_class):
             del kwargs['widget']
         return super(AnyUrlField, self).formfield(**kwargs)
 
-
     def from_db_value(self, value, expression, connection, context):
         # As of Django 1.8, this method is used to cast DB values to python values.
         # The call to to_python() is not used anymore.
         if value is None:
             return None
         return AnyUrlValue.from_db_value(value, self._static_registry)
-
 
     def to_python(self, value):
         if isinstance(value, AnyUrlValue):
@@ -105,7 +101,6 @@ class AnyUrlField(base_class):
 
         return AnyUrlValue.from_db_value(value, self._static_registry)
 
-
     def get_prep_value(self, value):
         if isinstance(value, six.string_types):
             # Happens with south migration
@@ -116,7 +111,6 @@ class AnyUrlField(base_class):
             # Convert back to string
             return value.to_db_value()
 
-
     def pre_save(self, model_instance, add):
         # Make sure that the SQL compiler in Django 1.6/1.7 doesn't get a AnyUrlValue,
         # but a regular 'str' object it can write to the database.
@@ -126,12 +120,10 @@ class AnyUrlField(base_class):
         else:
             return value.to_db_value()
 
-
     def value_to_string(self, obj):
         # For dumpdata and serialization
         value = self._get_val_from_obj(obj)
         return self.get_prep_value(value)
-
 
     def validate(self, value, model_instance):
         # Final validation of the field, before storing in the DB.
@@ -145,7 +137,7 @@ class AnyUrlField(base_class):
                     raise ValidationError(self.error_messages['invalid_choice'] % value.type_value)
 
 
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     # Tell South how to create custom fields
     try:
         from south.modelsinspector import add_introspection_rules
