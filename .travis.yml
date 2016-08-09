@@ -21,8 +21,7 @@ matrix:
 before_install:
 - pip install codecov
 install:
-- pip install Django==$DJANGO
-- pip install -e .
+- pip install Django==$DJANGO -e .
 script:
 - coverage run --source=any_urlfield runtests.py
 after_script:
