@@ -54,7 +54,9 @@ Or the current folder can be installed::
 Configuration
 -------------
 
-Add the module to the installed apps::
+Add the module to the installed apps:
+
+.. code-block:: python
 
     INSTALLED_APPS += (
         'any_urlfield',
@@ -63,7 +65,9 @@ Add the module to the installed apps::
 Usage
 -----
 
-In a Django model, the field can be included::
+In a Django model, the field can be included:
+
+.. code-block:: python
 
     from django.db import models
     from any_urlfield.models import AnyUrlField
@@ -74,14 +78,18 @@ In a Django model, the field can be included::
 
 By default, the ``AnyUrlField`` only supports linking to external pages.
 To add support for your own models (e.g. an ``Article`` model),
-include the following code in ``models.py``::
+include the following code in ``models.py``:
+
+.. code-block:: python
 
     from any_urlfield.models import AnyUrlField
     AnyUrlField.register_model(Article)
 
 Now, the ``AnyUrlField`` offers users a dropdown field to directly select an article.
 By default, it uses a ``django.forms.models.ModelChoiceField`` field with a ``django.forms.widgets.Select`` widget
-to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters::
+to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters:
+
+.. code-block:: python
 
     from any_urlfield.models import AnyUrlField
     from any_urlfield.forms import SimpleRawIdWidget
