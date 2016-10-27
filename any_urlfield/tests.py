@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
 import json
 import pickle
+
+from any_urlfield.forms.fields import ExtendedURLValidator
 from django.core import serializers
+from django.core.exceptions import ValidationError
 from django.core.serializers.base import DeserializationError
 from django.db import models
 from django.test import TestCase
@@ -87,6 +90,23 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "ftps://www.example.com/")
         self.assertEqual(unicode(v), "ftps://www.example.com/")
+
+    def test_from_dbvalue_mailto(self):
+        reg = UrlTypeRegistry()
+
+        v = AnyUrlValue.from_db_value("mailto://test@example.com", reg)
+        self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
+        self.assertEqual(v.type_value, "mailto://test@example.com")
+        self.assertEqual(unicode(v), "mailto://test@example.com")
+
+    def test_url_validation(self):
+        v = ExtendedURLValidator()
+        v('https://google.com')
+        v('tel://+44(0)123-45.67#8*9')
+        v('mailto://test@example.com?subject=Greetings')
+
+        self.assertRaises(ValidationError, v, 'tel://not a phone number')
+        self.assertRaises(ValidationError, v, 'mailto://not an email address')
 
     def test_from_db_value_id(self):
         reg = UrlTypeRegistry()

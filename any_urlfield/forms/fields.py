@@ -2,10 +2,16 @@
 Custom form fields for URLs
 """
 import copy
+from urlparse import urlparse
+
+import re
+
 import django
+from any_urlfield import EXTERNAL_SCHEMES
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.db.models.base import Model
 from django.utils.translation import ugettext_lazy as _
 from django.utils import six
@@ -130,3 +136,27 @@ class AnyUrlField(forms.MultiValueField):
             result = super(AnyUrlField, self).__deepcopy__(memo)
             result.fields = copy.deepcopy(result.fields, memo)
             return result
+
+
+class ExtendedURLValidator(URLValidator):
+    """
+    Add more schemes to those that will pass validation.
+    """
+    schemes = URLValidator.schemes + list(EXTERNAL_SCHEMES)
+    # Phone numbers don't match the host regex in Django's validator,
+    # so we test for a simple alternative.
+    tel_re = r'^[0-9\#\*\-\.\(\)\+]+$'
+
+    def __call__(self, value):
+        try:
+            super(ExtendedURLValidator, self).__call__(value)
+        except ValidationError as e:
+            parsed = urlparse(value)
+            if parsed.scheme == "tel" and re.match(self.tel_re, parsed.netloc):
+                return
+            raise e
+
+
+
+class ExtendedURLField(forms.URLField):
+    default_validators = [ExtendedURLValidator]

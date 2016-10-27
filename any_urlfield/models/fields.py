@@ -2,9 +2,9 @@
 Custom model fields to link to CMS content.
 """
 import django
+from any_urlfield.forms.fields import ExtendedURLValidator
 from django.utils import six
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db import models
 from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
@@ -130,7 +130,7 @@ class AnyUrlField(base_class):
         super(AnyUrlField, self).validate(value, model_instance)
         if value:
             if value.type_prefix == 'http':
-                validate_url = URLValidator()
+                validate_url = ExtendedURLValidator()
                 validate_url(value.type_value)
             elif value.type_value:
                 if not value.exists():

@@ -1,14 +1,10 @@
-from types import LambdaType
+from any_urlfield import EXTERNAL_SCHEMES
+from any_urlfield.forms.fields import ExtendedURLField
 from django import forms
 from django.core.cache import cache
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 from any_urlfield.cache import get_object_cache_keys
-
-
-# Avoid using common protocol names as prefix, this could clash in the future.
-# Values starting with such prefix should be handled as external URL.
-_invalid_prefixes = ('http', 'https', 'ftp', 'ftps', 'sftp', 'webdav', 'webdavs', 'afp', 'smb', 'git', 'svn', 'hg')
 
 
 class UrlType(object):
@@ -84,7 +80,7 @@ class UrlTypeRegistry(object):
     def __init__(self):
         self._url_types = [UrlType(
             model=None,
-            form_field=forms.URLField(label=_("External URL"), widget=forms.TextInput(attrs={'class': 'vTextField'})),
+            form_field=ExtendedURLField(label=_("External URL"), widget=forms.TextInput(attrs={'class': 'vTextField'})),
             widget=None,
             title=_("External URL"),
             prefix='http',   # no https needed, 'http' is a special constant.
@@ -123,7 +119,7 @@ class UrlTypeRegistry(object):
         return urltype
 
     def is_external_url_prefix(self, prefix):
-        return prefix in _invalid_prefixes
+        return prefix in EXTERNAL_SCHEMES
 
     def __eq__(self, other):
         # For __getstate__ logic
