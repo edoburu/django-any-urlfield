@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import json
 import pickle
 
-from any_urlfield.forms.fields import ExtendedURLValidator
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.core.serializers.base import DeserializationError
@@ -10,6 +9,7 @@ from django.db import models
 from django.test import TestCase
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
+from any_urlfield.validators import ExtendedURLValidator
 
 try:
     from django.utils import six

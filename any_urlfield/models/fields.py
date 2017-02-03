@@ -2,12 +2,12 @@
 Custom model fields to link to CMS content.
 """
 import django
-from any_urlfield.forms.fields import ExtendedURLValidator
 from django.utils import six
 from django.core.exceptions import ValidationError
 from django.db import models
 from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
+from any_urlfield.validators import ExtendedURLValidator
 
 if django.VERSION < (1, 8):
     base_class = six.with_metaclass(models.SubfieldBase, models.CharField)
