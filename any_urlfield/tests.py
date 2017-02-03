@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import json
 import pickle
 
+import django
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.core.serializers.base import DeserializationError
@@ -10,6 +11,11 @@ from django.test import TestCase
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
+
+try:
+    from unittest import skipIf
+except ImportError:
+    from django.utils.unittest import skipIf  # Python 2.6
 
 try:
     from django.utils import six
@@ -99,6 +105,7 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "mailto://test@example.com")
         self.assertEqual(unicode(v), "mailto://test@example.com")
 
+    @skipIf(django.VERSION < (1, 8), "extended validation not supported in Django 1.7 and below")
     def test_url_validation(self):
         v = ExtendedURLValidator()
         v('https://google.com')
