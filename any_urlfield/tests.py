@@ -1,12 +1,21 @@
 from __future__ import unicode_literals
 import json
 import pickle
+
+import django
 from django.core import serializers
+from django.core.exceptions import ValidationError
 from django.core.serializers.base import DeserializationError
 from django.db import models
 from django.test import TestCase
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
+from any_urlfield.validators import ExtendedURLValidator
+
+try:
+    from unittest import skipIf
+except ImportError:
+    from django.utils.unittest import skipIf  # Python 2.6
 
 try:
     from django.utils import six
@@ -87,6 +96,24 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "ftps://www.example.com/")
         self.assertEqual(unicode(v), "ftps://www.example.com/")
+
+    def test_from_dbvalue_mailto(self):
+        reg = UrlTypeRegistry()
+
+        v = AnyUrlValue.from_db_value("mailto://test@example.com", reg)
+        self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
+        self.assertEqual(v.type_value, "mailto://test@example.com")
+        self.assertEqual(unicode(v), "mailto://test@example.com")
+
+    @skipIf(django.VERSION < (1, 8), "extended validation not supported in Django 1.7 and below")
+    def test_url_validation(self):
+        v = ExtendedURLValidator()
+        v('https://google.com')
+        v('tel://+44(0)123-45.67#8*9')
+        v('mailto://test@example.com?subject=Greetings')
+
+        self.assertRaises(ValidationError, v, 'tel://not a phone number')
+        self.assertRaises(ValidationError, v, 'mailto://not an email address')
 
     def test_from_db_value_id(self):
         reg = UrlTypeRegistry()

@@ -2,15 +2,16 @@
 Custom form fields for URLs
 """
 import copy
+
 import django
+from any_urlfield.forms.widgets import AnyUrlWidget
+from any_urlfield.validators import ExtendedURLValidator
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db.models.base import Model
-from django.utils.translation import ugettext_lazy as _
 from django.utils import six
-from any_urlfield.forms.widgets import AnyUrlWidget
-from any_urlfield.models.values import AnyUrlValue
+from django.utils.translation import ugettext_lazy as _
 
 try:
     from django.forms.utils import ErrorList  # Django 1.7
@@ -55,6 +56,10 @@ class AnyUrlField(forms.MultiValueField):
         super(AnyUrlField, self).__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
+        # Reimporting models from froms is tricky, and may lead to circular ImportErrors
+        # Hence, importing here locally.
+        from any_urlfield.models.values import AnyUrlValue
+
         if data_list:
             type_prefix = data_list[0]    # avoid `id, *values = data_list` notation, that is python 3 syntax.
             values = data_list[1:]
@@ -130,3 +135,10 @@ class AnyUrlField(forms.MultiValueField):
             result = super(AnyUrlField, self).__deepcopy__(memo)
             result.fields = copy.deepcopy(result.fields, memo)
             return result
+
+
+class ExtendedURLField(forms.URLField):
+    """
+    An URL field that also supports validating ``tel:`` and ``mailto:`` links.
+    """
+    default_validators = [ExtendedURLValidator]
