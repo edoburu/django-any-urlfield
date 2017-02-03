@@ -2,8 +2,6 @@
 Custom form fields for URLs
 """
 import copy
-from urlparse import urlparse
-
 import re
 
 import django
@@ -17,6 +15,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import six
 from any_urlfield.forms.widgets import AnyUrlWidget
 from any_urlfield.models.values import AnyUrlValue
+
+try:
+    from urllib.parse import urlparse  # Python 3
+except ImportError:
+    from urlparse import urlparse
 
 try:
     from django.forms.utils import ErrorList  # Django 1.7
