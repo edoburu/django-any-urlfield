@@ -153,11 +153,11 @@ class ExtendedURLValidator(URLValidator):
     def __call__(self, value):
         try:
             super(ExtendedURLValidator, self).__call__(value)
-        except ValidationError as e:
+        except ValidationError:
             parsed = urlparse(value)
             if parsed.scheme == "tel" and re.match(self.tel_re, parsed.netloc):
                 return
-            raise e
+            raise
 
 
 
