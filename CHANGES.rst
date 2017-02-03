@@ -1,6 +1,14 @@
 Changelog
 =========
 
+
+Version 2.3 (2017-02-03)
+------------------------
+
+* For Django 1.8 and up, the ``URLValidator`` now allows more
+  URL schemes by default, specifically ``mailto:`` and ``tel:`` URLs.
+
+
 Version 2.2.1 (2016-02-26)
 --------------------------
 
