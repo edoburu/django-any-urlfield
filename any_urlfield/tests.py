@@ -187,6 +187,11 @@ class AnyUrlTests(TestCase):
         v2 = pickle.load(out)
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
 
+    def test_db_empty_pre_save(self):
+        obj = UrlModel()
+        obj.save()
+        self.assertTrue(obj.pk)
+
     def test_db_pre_save(self):
         obj = UrlModel(url=AnyUrlValue.from_db_value('http://www.example.org/'))
         obj.save()
