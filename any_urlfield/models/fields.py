@@ -115,7 +115,7 @@ class AnyUrlField(base_class):
         # Make sure that the SQL compiler in Django 1.6/1.7 doesn't get a AnyUrlValue,
         # but a regular 'str' object it can write to the database.
         value = super(AnyUrlField, self).pre_save(model_instance, add)
-        if value is None:
+        if not value:
             return None
         else:
             return value.to_db_value()
