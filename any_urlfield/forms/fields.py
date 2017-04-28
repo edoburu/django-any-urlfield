@@ -53,6 +53,7 @@ class AnyUrlField(forms.MultiValueField):
         # Instantiate widget. Is not done by parent at all.
         widget = self.widget(url_type_registry=url_type_registry)
         kwargs['widget'] = widget
+        kwargs.pop('empty_value', None)  # for Django 1.11
         super(AnyUrlField, self).__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
