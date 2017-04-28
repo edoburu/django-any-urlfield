@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 import json
 import pickle
-import re
 
 import django
 from django import forms
@@ -11,7 +10,6 @@ from django.core.serializers.base import DeserializationError
 from django.db import models
 from django.template import Template, Context
 from django.test import TestCase
-from django.test.html import normalize_whitespace
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
@@ -66,11 +64,17 @@ class AnyUrlTests(TestCase):
     maxDiff = None
 
     def test_registry(self):
+        """
+        Test the basic registry setup.
+        """
         reg = UrlTypeRegistry()
         self.assertIsNotNone(reg['http'])
         self.assertIsNotNone(reg['https'])
 
     def test_from_model(self):
+        """
+        Basic test of ``from_model``.
+        """
         page2 = RegPageModel.objects.create(pk=1, slug='foo2')
         v = AnyUrlValue.from_model(page2)
 
@@ -78,7 +82,10 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, page2.id)
         self.assertEqual(v.to_db_value(), 'any_urlfield.regpagemodel://1')
 
-    def test_from_dbvalue(self):
+    def test_from_db_value(self):
+        """
+        Basic test of ``from_db_value``.
+        """
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("http://www.example.com/", reg)
@@ -86,7 +93,10 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "http://www.example.com/")
         self.assertEqual(unicode(v), "http://www.example.com/")
 
-    def test_from_dbvalue_https(self):
+    def test_from_db_value_https(self):
+        """
+        Make sure other URLs are properly serialized.
+        """
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("https://www.example.com/", reg)
@@ -94,7 +104,10 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "https://www.example.com/")
         self.assertEqual(unicode(v), "https://www.example.com/")
 
-    def test_from_dbvalue_ftps(self):
+    def test_from_db_value_ftps(self):
+        """
+        Make sure other URLs are properly serialized.
+        """
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("ftps://www.example.com/", reg)
@@ -102,7 +115,10 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "ftps://www.example.com/")
         self.assertEqual(unicode(v), "ftps://www.example.com/")
 
-    def test_from_dbvalue_mailto(self):
+    def test_from_db_value_mailto(self):
+        """
+        Test constructing the value from ID.
+        """
         reg = UrlTypeRegistry()
 
         v = AnyUrlValue.from_db_value("mailto://test@example.com", reg)
@@ -110,17 +126,10 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v.type_value, "mailto://test@example.com")
         self.assertEqual(unicode(v), "mailto://test@example.com")
 
-    @skipIf(django.VERSION < (1, 8), "extended validation not supported in Django 1.7 and below")
-    def test_url_validation(self):
-        v = ExtendedURLValidator()
-        v('https://google.com')
-        v('tel://+44(0)123-45.67#8*9')
-        v('mailto://test@example.com?subject=Greetings')
-
-        self.assertRaises(ValidationError, v, 'tel://not a phone number')
-        self.assertRaises(ValidationError, v, 'mailto://not an email address')
-
-    def test_from_db_value_id(self):
+    def test_valid_db_id(self):
+        """
+        Make sure ID values are properly stored and serialized.
+        """
         reg = UrlTypeRegistry()
         urltype = reg.register(PageModel)
 
@@ -143,6 +152,9 @@ class AnyUrlTests(TestCase):
         self.assertTrue(v.exists())
 
     def test_invalid_db_id(self):
+        """
+        Make sure invalid ID's are properly handled and recognized.
+        """
         reg = UrlTypeRegistry()
         urltype = reg.register(PageModel)
         v = AnyUrlValue(urltype.prefix, 999999, reg)
@@ -162,9 +174,22 @@ class AnyUrlTests(TestCase):
         self.assertFalse(v.exists())
 
     def test_bool_empty(self):
+        """
+        Make sure empty value is treated as false.
+        """
         x = AnyUrlValue.from_db_value('')
         self.assertFalse(1 if x else 0)
         self.assertFalse(x.exists())
+
+    @skipIf(django.VERSION < (1, 8), "extended validation not supported in Django 1.7 and below")
+    def test_url_validation(self):
+        v = ExtendedURLValidator()
+        v('https://google.com')
+        v('tel://+44(0)123-45.67#8*9')
+        v('mailto://test@example.com?subject=Greetings')
+
+        self.assertRaises(ValidationError, v, 'tel://not a phone number')
+        self.assertRaises(ValidationError, v, 'mailto://not an email address')
 
     def test_render_widget(self):
         """
@@ -217,7 +242,9 @@ class AnyUrlTests(TestCase):
 """))
 
     def test_pickle(self):
-        # See if regular fields can be pickled
+        """
+        See if regular fields can be pickled
+        """
         v1 = AnyUrlValue.from_db_value("http://www.example.com/")
         out = StringIO()
         pickle.dump(v1, out)
@@ -228,6 +255,9 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue
 
     def test_pickle_registry(self):
+        """
+        Test pickle when the ``AnyUrlValue`` has a custom registry.
+        """
         reg = UrlTypeRegistry()
         urltype = reg.register(PageModel)
         page = PageModel.objects.create(slug='foo')
@@ -243,11 +273,17 @@ class AnyUrlTests(TestCase):
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
 
     def test_db_empty_pre_save(self):
+        """
+        Make sure saving empty values works.
+        """
         obj = UrlModel()
         obj.save()
         self.assertTrue(obj.pk)
 
     def test_db_pre_save(self):
+        """
+        Make sure saving works
+        """
         obj = UrlModel(url=AnyUrlValue.from_db_value('http://www.example.org/'))
         obj.save()
         self.assertTrue(obj.pk)
