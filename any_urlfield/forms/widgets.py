@@ -42,10 +42,12 @@ if django.VERSION < (1, 11):
 
         def __init__(self, name, value, attrs, choices):
             extraclasses = 'radiolist inline'
-            if 'class' in attrs:
-                attrs['class'] += ' ' + extraclasses
-            else:
-                attrs['class'] = extraclasses
+            if extraclasses not in attrs.get('class'):
+                attrs = attrs.copy()
+                if 'class' in attrs:
+                    attrs['class'] += ' ' + extraclasses
+                else:
+                    attrs['class'] = extraclasses
 
             super(HorizontalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
 
@@ -64,9 +66,10 @@ class UrlTypeSelect(widgets.RadioSelect):
         template_name = "any_urlfield/widgets/url_type_select.html"
 
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('attrs', {})
+        kwargs['attrs'].setdefault('class', 'any_urlfield-url_type radiolist inline')
         if django.VERSION < (1, 11):
             kwargs.setdefault('renderer', HorizontalRadioFieldRenderer)
-            kwargs.setdefault('attrs', {'class': 'any_urlfield-url_type'})
         super(UrlTypeSelect, self).__init__(*args, **kwargs)
 
 
