@@ -2,12 +2,13 @@
 Custom widgets used by the URL form fields.
 """
 from __future__ import unicode_literals
+import re
+
 import django
 from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
-from django.forms.widgets import RadioFieldRenderer
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 
@@ -21,39 +22,59 @@ try:
 except ImportError:
     from django.forms.util import flatatt
 
+RE_CLEANUP_CLASS = re.compile('[^a-z0-9-_]')
 
-class HorizontalRadioFieldRenderer(RadioFieldRenderer):
+
+if django.VERSION < (1, 11):
+    from django.forms.widgets import RadioFieldRenderer
+
+    class HorizontalRadioFieldRenderer(RadioFieldRenderer):
+        """
+        Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
+
+        This produces a similar layout like the ``radio_fields = {'field': admin.HORIZONTAL}`` code does in the admin interface.
+        It can be used as argument for the :class:`~django.forms.RadioSelect` widget:
+
+        .. code-block:: python
+
+            widget = widgets.RadioSelect(choices=choices, renderer=HorizontalRadioFieldRenderer)
+        """
+
+        def __init__(self, name, value, attrs, choices):
+            extraclasses = 'radiolist inline'
+            if 'class' in attrs:
+                attrs['class'] += ' ' + extraclasses
+            else:
+                attrs['class'] = extraclasses
+
+            super(HorizontalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
+
+        def render(self):
+            return mark_safe(u'<ul%s>\n%s\n</ul>' % (
+                flatatt(self.attrs),
+                u'\n'.join([u'<li>%s</li>' % force_unicode(w) for w in self]))
+            )
+
+
+class UrlTypeSelect(widgets.RadioSelect):
     """
-    Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
-
-    This produces a similar layout like the ``radio_fields = {'field': admin.HORIZONTAL}`` code does in the admin interface.
-    It can be used as argument for the :class:`~django.forms.RadioSelect` widget:
-
-    .. code-block:: python
-
-        widget = widgets.RadioSelect(choices=choices, renderer=HorizontalRadioFieldRenderer)
+    Horizontal radio select
     """
+    if django.VERSION >= (1, 11):
+        template_name = "any_urlfield/widgets/url_type_select.html"
 
-    def __init__(self, name, value, attrs, choices):
-        extraclasses = 'radiolist inline'
-        if 'class' in attrs:
-            attrs['class'] += ' ' + extraclasses
-        else:
-            attrs['class'] = extraclasses
-
-        super(HorizontalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
-
-    def render(self):
-        return mark_safe(u'<ul%s>\n%s\n</ul>' % (
-            flatatt(self.attrs),
-            u'\n'.join([u'<li>%s</li>' % force_unicode(w) for w in self]))
-        )
+    def __init__(self, *args, **kwargs):
+        if django.VERSION < (1, 11):
+            kwargs.setdefault('renderer', HorizontalRadioFieldRenderer)
+            kwargs.setdefault('attrs', {'class': 'any_urlfield-url_type'})
+        super(UrlTypeSelect, self).__init__(*args, **kwargs)
 
 
 class AnyUrlWidget(widgets.MultiWidget):
     """
     The URL widget, rendering the URL selector.
     """
+    template_name = 'any_urlfield/widgets/any_urlfield.html'
 
     class Media:
         js = ('any_urlfield/any_urlfield.js',)
@@ -64,7 +85,7 @@ class AnyUrlWidget(widgets.MultiWidget):
 
         # Expose sub widgets for form field.
         self.url_type_registry = url_type_registry
-        self.url_type_widget = widgets.RadioSelect(choices=type_choices, attrs={'class': 'any_urlfield-url_type'}, renderer=HorizontalRadioFieldRenderer)
+        self.url_type_widget = UrlTypeSelect(choices=type_choices)
         self.url_widgets = []
 
         # Combine to list, ensure order of values list later.
@@ -107,20 +128,33 @@ class AnyUrlWidget(widgets.MultiWidget):
                 initial = [u'http', u'', u'', u'']
             return super(AnyUrlWidget, self)._has_changed(initial, data)
 
-    def format_output(self, rendered_widgets):
-        """
-        Custom rendering of the widgets.
-        """
-        urltypes = list(self.url_type_registry)
-        url_type_html = rendered_widgets.pop(0)
-        output = [url_type_html]
+    if django.VERSION < (1, 11):
+        def format_output(self, rendered_widgets):
+            """
+            Custom rendering of the widgets.
+            """
+            urltypes = list(self.url_type_registry)
+            url_type_html = rendered_widgets.pop(0)
+            output = [url_type_html]
 
-        # Wrap remaining options in <p> for scripting.
-        for i, widget_html in enumerate(rendered_widgets):
-            prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
-            output.append(u'<p class="any_urlfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
+            # Wrap remaining options in <p> for scripting.
+            for i, widget_html in enumerate(rendered_widgets):
+                prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
+                output.append(u'<p class="any_urlfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
 
-        return u'<div class="related-widget-wrapper">{0}</div>'.format(u''.join(output))
+            return u'<div class="related-widget-wrapper">{0}</div>'.format(u''.join(output))
+    else:
+        def get_context(self, name, value, attrs):
+            context = super(AnyUrlWidget, self).get_context(name, value, attrs)
+            context['wrap_label'] = True  # fix Django 1.11 "bug" of lost context for RadioSelect field
+
+            # Each subwidget corresponds with an registered URL type.
+            # Make sure the template can render the proper ID's for JavaScript.
+            subwidgets = context['widget']['subwidgets']
+            for i, urltype in enumerate(self.url_type_registry):
+                subwidgets[i + 1]['prefix'] = RE_CLEANUP_CLASS.sub('', urltype.prefix)
+
+            return context
 
 
 class SimpleRawIdWidget(ForeignKeyRawIdWidget):

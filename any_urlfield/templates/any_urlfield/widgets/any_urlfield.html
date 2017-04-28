@@ -1,0 +1,13 @@
+<div class="related-widget-wrapper">
+  {# Single type selector widget #}
+  {% with type_widget=widget.subwidgets.0 %}
+    {% include type_widget.template_name with widget=type_widget %}
+  {% endwith %}
+
+  {# All subwidgets for the different types #}
+  {% for widget in widget.subwidgets|slice:"1:" %}
+    <p class="any_urlfield-url-{{ widget.prefix }}" style="clear:left">
+      {% include widget.template_name %}
+    </p>
+  {% endfor %}
+</div>
