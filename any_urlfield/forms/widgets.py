@@ -72,6 +72,12 @@ class UrlTypeSelect(widgets.RadioSelect):
             kwargs.setdefault('renderer', HorizontalRadioFieldRenderer)
         super(UrlTypeSelect, self).__init__(*args, **kwargs)
 
+    if django.VERSION >= (1, 11):
+        def get_context(self, name, value, attrs):
+            context = super(UrlTypeSelect, self).get_context(name, value, attrs)
+            context['widget']['flatatt'] = flatatt(context['widget']['attrs'])
+            return context
+
 
 class AnyUrlWidget(widgets.MultiWidget):
     """

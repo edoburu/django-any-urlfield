@@ -1,13 +1,17 @@
 from __future__ import unicode_literals
 import json
 import pickle
+import re
 
 import django
+from django import forms
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.core.serializers.base import DeserializationError
 from django.db import models
+from django.template import Template, Context
 from django.test import TestCase
+from django.test.html import normalize_whitespace
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
@@ -59,6 +63,7 @@ AnyUrlField.register_model(RegPageModel)
 
 
 class AnyUrlTests(TestCase):
+    maxDiff = None
 
     def test_registry(self):
         reg = UrlTypeRegistry()
@@ -160,6 +165,56 @@ class AnyUrlTests(TestCase):
         x = AnyUrlValue.from_db_value('')
         self.assertFalse(1 if x else 0)
         self.assertFalse(x.exists())
+
+    def test_render_widget(self):
+        """
+        See if widget rendering is consistent between Django versions
+        """
+        from any_urlfield.forms import AnyUrlField
+
+        reg = UrlTypeRegistry()
+        reg.register(PageModel)
+
+        class ExampleForm(forms.Form):
+            field = AnyUrlField(url_type_registry=reg)
+
+        def _normalize_html(html):
+            # Avoid some differences in Django versions
+            html = html.replace(' checked="checked"', '')
+            html = html.replace(' checked', '')
+            html = html.replace(' selected="selected"', ' selected')
+            html = html.replace(' required', '')
+            return html
+
+        html = Template('{{ form.field }}').render(Context({'form': ExampleForm()}))
+        self.assertHTMLEqual(_normalize_html(html), _normalize_html("""
+<div class="related-widget-wrapper">
+  <ul class="any_urlfield-url_type radiolist inline" id="id_field_0">
+    <li>
+      <label for="id_field_0_0">
+        <input type="radio" name="field_0" value="http"
+               class="any_urlfield-url_type radiolist inline" id="id_field_0_0"/>
+        External URL</label>
+    </li>
+    <li>
+      <label for="id_field_0_1">
+        <input type="radio" name="field_0" value="any_urlfield.pagemodel"
+               class="any_urlfield-url_type radiolist inline" id="id_field_0_1"/>
+        page model</label>
+    </li>
+  </ul>
+
+  <p class="any_urlfield-url-http" style="clear:left">
+    <input type="text" name="field_1" class="vTextField" id="id_field_1"/>
+  </p>
+
+  <p class="any_urlfield-url-any_urlfieldpagemodel" style="clear:left">
+    <select name="field_2" id="id_field_2">
+      <option value="" selected>---------</option>
+    </select>
+  </p>
+</div>
+"""))
 
     def test_pickle(self):
         # See if regular fields can be pickled
