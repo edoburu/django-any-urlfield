@@ -248,6 +248,7 @@ class AnyUrlTests(TestCase):
         instance = UrlModel.objects.create(url=AnyUrlValue.from_db_value('http://example.org/'))
         form = UrlModelForm(instance=instance)
         self.assertIsInstance(form.fields['url'], any_urlfield.forms.AnyUrlField)
+        form.as_p()  # Walk through rendering code.
 
         # Test saving URLs
         form = UrlModelForm(instance=instance, data={
@@ -258,6 +259,7 @@ class AnyUrlTests(TestCase):
         form.save()
         self.assertEqual(str(instance.url), 'http://example2.org/')
 
+        # Test saving IDs
         x = RegPageModel.objects.create(slug='modelform')
         form = UrlModelForm(instance=instance, data={
             'url_0': 'any_urlfield.regpagemodel',
@@ -267,6 +269,11 @@ class AnyUrlTests(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
         self.assertEqual(str(instance.url), '/modelform/')
+
+        # Test showing IDs
+        form = UrlModelForm(instance=instance)
+        assert form.initial['url'].to_db_value() == 'any_urlfield.regpagemodel://{}'.format(x.pk)
+        form.as_p()  # Walk through rendering code.
 
     def test_render_widget(self):
         """
