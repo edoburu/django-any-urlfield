@@ -12,7 +12,7 @@ except ImportError:
     pass  # Python 2, Django 1.3
 
 
-class AnyUrlTests(TestCase):
+class ModelTests(TestCase):
     maxDiff = None
 
     def test_registry(self):
