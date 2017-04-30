@@ -244,7 +244,7 @@ class AnyUrlTests(TestCase):
                 fields = ('url',)
 
         # Test showing the form
-        instance = UrlModel.objects.create(url='http://examle.org/')
+        instance = UrlModel.objects.create(url=AnyUrlValue.from_db_value('http://example.org/'))
         form = UrlModelForm(instance=instance)
         self.assertIsInstance(form.fields['url'], any_urlfield.forms.AnyUrlField)
 
