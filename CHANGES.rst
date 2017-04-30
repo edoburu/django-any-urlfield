@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Git changes
+-----------
+
+* Added Django 1.11 support.
+* Dropped Python 2.6 support.
+* Fix for empty value.
+
 
 Version 2.3 (2017-02-03)
 ------------------------
