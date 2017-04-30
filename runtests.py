@@ -73,6 +73,7 @@ if not settings.configured:
             'django.contrib.auth.middleware.AuthenticationMiddleware',
         ),
         TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1,6) else 'django.test.runner.DiscoverRunner',
+        ROOT_URLCONF = 'any_urlfield.tests.urls',
         **template_settings
     )
 
