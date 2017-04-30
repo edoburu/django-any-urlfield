@@ -33,17 +33,16 @@ class UrlType(object):
         return dict
 
     def __eq__(self, other):
+        if not isinstance(other, UrlType):
+            return NotImplemented
+
         # Skipping title and form_field
-        return isinstance(other, UrlType) \
-            and self.model == other.model \
+        return self.model == other.model \
             and self.prefix == other.prefix \
             and self.has_id_value == other.has_id_value
 
     def __ne__(self, other):
-        return not isinstance(other, UrlType) \
-            or self.model != other.model \
-            or self.prefix != other.prefix \
-            or self.has_id_value != other.has_id_value
+        return not self == other
 
     def get_form_field(self):
         """
@@ -122,11 +121,14 @@ class UrlTypeRegistry(object):
         return prefix in EXTERNAL_SCHEMES
 
     def __eq__(self, other):
+        if not isinstance(other, UrlTypeRegistry):
+            return NotImplemented
+
         # For __getstate__ logic
         return self._url_types == other._url_types
 
     def __ne__(self, other):
-        return self._url_types != other._url_types
+        return not self == other
 
     # Accessing API is similar to `list` and '`dict`:
 
