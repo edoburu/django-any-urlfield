@@ -1,19 +1,14 @@
-django-any-urlfield
-===================
-
-.. image:: https://travis-ci.org/edoburu/django-any-urlfield.svg?branch=master
+.. image:: https://img.shields.io/travis/edoburu/django-any-urlfield/master.svg?branch=master
     :target: http://travis-ci.org/edoburu/django-any-urlfield
 .. image:: https://img.shields.io/pypi/v/django-any-urlfield.svg
-    :target: https://pypi.python.org/pypi/django-any-urlfield/
-.. image:: https://img.shields.io/pypi/dm/django-any-urlfield.svg
-    :target: https://pypi.python.org/pypi/django-any-urlfield/
-.. image:: https://img.shields.io/badge/wheel-yes-green.svg
     :target: https://pypi.python.org/pypi/django-any-urlfield/
 .. image:: https://img.shields.io/pypi/l/django-any-urlfield.svg
     :target: https://pypi.python.org/pypi/django-any-urlfield/
 .. image:: https://img.shields.io/codecov/c/github/edoburu/django-any-urlfield/master.svg
     :target: https://codecov.io/github/edoburu/django-any-urlfield?branch=master
 
+django-any-urlfield
+===================
 
 The ``any_urlfield`` module provides an improved URL selector
 that supports both URLs to internal models and external URLs.
