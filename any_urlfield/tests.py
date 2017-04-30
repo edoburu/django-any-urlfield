@@ -3,6 +3,7 @@ import json
 import pickle
 
 import django
+from any_urlfield.forms import SimpleRawIdWidget
 from django import forms
 from django.core import serializers
 from django.core.exceptions import ValidationError
@@ -59,7 +60,7 @@ class RegPageModel(models.Model):
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
 
-AnyUrlField.register_model(RegPageModel)
+AnyUrlField.register_model(RegPageModel, widget=SimpleRawIdWidget(RegPageModel))
 
 
 class AnyUrlTests(TestCase):
