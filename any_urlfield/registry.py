@@ -94,10 +94,7 @@ class UrlTypeRegistry(object):
             raise ValueError("Model is already registered: '{0}'".format(ModelClass))
 
         opts = ModelClass._meta
-        try:
-            opts = opts.concrete_model._meta
-        except AttributeError:  # Django 1.3
-            pass
+        opts = opts.concrete_model._meta
 
         if not prefix:
             # Store something descriptive, easier to lookup from raw database content.

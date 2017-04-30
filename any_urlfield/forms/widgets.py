@@ -10,12 +10,8 @@ from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.template.defaultfilters import slugify
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
 
 try:
     from django.forms.utils import flatatt  # Django 1.7+
