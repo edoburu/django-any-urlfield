@@ -4,22 +4,6 @@ from any_urlfield.forms import SimpleRawIdWidget
 from any_urlfield.models import AnyUrlField
 from django.db import models
 
-try:
-    from unittest import skipIf
-except ImportError:
-    from django.utils.unittest import skipIf  # Python 2.6
-
-try:
-    from django.utils import six
-    unicode = six.text_type
-except ImportError:
-    pass  # Python 2, Django 1.3
-
-try:
-    from StringIO import StringIO       # Python 2
-except ImportError:
-    from io import BytesIO as StringIO  # Python 3
-
 
 class UrlModel(models.Model):
     """
