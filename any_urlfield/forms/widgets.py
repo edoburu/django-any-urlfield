@@ -13,9 +13,9 @@ from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 
 try:
-    from django.utils.encoding import force_unicode
+    from django.utils.encoding import force_text
 except ImportError:
-    from django.utils.encoding import force_text as force_unicode
+    from django.utils.encoding import force_unicode as force_text
 
 try:
     from django.forms.utils import flatatt  # Django 1.7+
@@ -54,7 +54,7 @@ if django.VERSION < (1, 11):
         def render(self):
             return mark_safe(u'<ul%s>\n%s\n</ul>' % (
                 flatatt(self.attrs),
-                u'\n'.join([u'<li>%s</li>' % force_unicode(w) for w in self]))
+                u'\n'.join([u'<li>%s</li>' % force_text(w) for w in self]))
             )
 
 

@@ -2,6 +2,7 @@
 Custom data objects
 """
 from __future__ import unicode_literals
+from django.utils import six
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.encoding import python_2_unicode_compatible
@@ -14,13 +15,8 @@ try:
 except ImportError:
     from django.db.models.loading import get_model
 
-try:
-    from django.utils import six
-    unicode = six.text_type
-    string_types = six.string_types
-except ImportError:
-    # Python 2, Django 1.3
-    string_types = basestring
+unicode = six.text_type
+string_types = six.string_types
 
 if six.PY3:
     long = int

@@ -1,14 +1,10 @@
 from __future__ import unicode_literals
+from unittest import skipIf
 
 import django
 from any_urlfield.validators import ExtendedURLValidator
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-
-try:
-    from unittest import skipIf
-except ImportError:
-    from django.utils.unittest import skipIf  # Python 2.6
 
 
 class ValidationTests(TestCase):

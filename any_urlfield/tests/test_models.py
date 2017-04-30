@@ -3,13 +3,10 @@ from __future__ import unicode_literals
 from any_urlfield.models import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
+from django.utils import six
 from django.test import TestCase
 
-try:
-    from django.utils import six
-    unicode = six.text_type
-except ImportError:
-    pass  # Python 2, Django 1.3
+unicode = six.text_type
 
 
 class ModelTests(TestCase):
