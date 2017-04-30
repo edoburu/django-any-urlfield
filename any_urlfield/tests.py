@@ -10,6 +10,8 @@ from django.core.serializers.base import DeserializationError
 from django.db import models
 from django.template import Template, Context
 from django.test import TestCase
+
+import any_urlfield.forms
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
@@ -195,13 +197,11 @@ class AnyUrlTests(TestCase):
         """
         Basic test of form validation.
         """
-        from any_urlfield.forms import AnyUrlField
-
         reg = UrlTypeRegistry()
         reg.register(PageModel)
 
         class ExampleForm(forms.Form):
-            url = AnyUrlField(url_type_registry=reg)
+            url = any_urlfield.forms.AnyUrlField(url_type_registry=reg)
 
         # Test 1: basic URL
         form = ExampleForm(data={
@@ -234,17 +234,48 @@ class AnyUrlTests(TestCase):
         })
         self.assertFalse(form.is_valid())
 
+    def test_modelform(self):
+        """
+        Testing the model form creation
+        """
+        class UrlModelForm(forms.ModelForm):
+            class Meta:
+                model = UrlModel
+                fields = ('url',)
+
+        # Test showing the form
+        instance = UrlModel.objects.create(url='http://examle.org/')
+        form = UrlModelForm(instance=instance)
+        self.assertIsInstance(form.fields['url'], any_urlfield.forms.AnyUrlField)
+
+        # Test saving URLs
+        form = UrlModelForm(instance=instance, data={
+            'url_0': 'http',
+            'url_1': 'http://example2.org/',
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertEqual(str(instance.url), 'http://example2.org/')
+
+        x = RegPageModel.objects.create(slug='modelform')
+        form = UrlModelForm(instance=instance, data={
+            'url_0': 'any_urlfield.regpagemodel',
+            'url_2': str(x.pk),
+        })
+        self.assertEqual(form.errors, {})
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertEqual(str(instance.url), '/modelform/')
+
     def test_render_widget(self):
         """
         See if widget rendering is consistent between Django versions
         """
-        from any_urlfield.forms import AnyUrlField
-
         reg = UrlTypeRegistry()
         reg.register(PageModel)
 
         class ExampleForm(forms.Form):
-            field = AnyUrlField(url_type_registry=reg)
+            field = any_urlfield.forms.AnyUrlField(url_type_registry=reg)
 
         def _normalize_html(html):
             # Avoid some differences in Django versions
