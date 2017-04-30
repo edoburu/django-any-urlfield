@@ -191,6 +191,25 @@ class AnyUrlTests(TestCase):
         self.assertRaises(ValidationError, v, 'tel://not a phone number')
         self.assertRaises(ValidationError, v, 'mailto://not an email address')
 
+    def test_form_clean(self):
+        """
+        Basic test of form validation.
+        """
+        from any_urlfield.forms import AnyUrlField
+
+        reg = UrlTypeRegistry()
+        reg.register(PageModel)
+
+        class ExampleForm(forms.Form):
+            url = AnyUrlField(url_type_registry=reg)
+
+        form = ExampleForm(data={
+            'url_0': 'http',
+            'url_1': 'http://examle.org/',
+        })
+        assert form.is_valid()
+        assert form.cleaned_data['url'] == AnyUrlValue.from_db_value('http://examle.org/')
+
     def test_render_widget(self):
         """
         See if widget rendering is consistent between Django versions
