@@ -221,14 +221,14 @@ class AnyUrlValue(object):
     __nonzero__ = __bool__
 
     def __eq__(self, other):
-        return isinstance(other, AnyUrlValue) \
-            and self.url_type == other.url_type \
+        if not isinstance(other, AnyUrlValue):
+            return NotImplemented
+
+        return self.url_type == other.url_type \
             and self.type_value == other.type_value
 
     def __ne__(self, other):
-        return not isinstance(other, AnyUrlValue) \
-            or self.url_type != other.url_type \
-            or self.type_value != other.type_value
+        return not self == other
 
     def __getstate__(self):
         """
