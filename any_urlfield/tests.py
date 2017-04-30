@@ -203,12 +203,36 @@ class AnyUrlTests(TestCase):
         class ExampleForm(forms.Form):
             url = AnyUrlField(url_type_registry=reg)
 
+        # Test 1: basic URL
         form = ExampleForm(data={
             'url_0': 'http',
             'url_1': 'http://examle.org/',
         })
-        assert form.is_valid()
-        assert form.cleaned_data['url'] == AnyUrlValue.from_db_value('http://examle.org/')
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['url'], AnyUrlValue.from_db_value('http://examle.org/'))
+
+        # Test 2: ID field
+        x = PageModel.objects.create(slug='foo')
+        form = ExampleForm(data={
+            'url_0': 'any_urlfield.pagemodel',
+            'url_1': '',
+            'url_2': str(x.pk),
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['url'].to_db_value(), 'any_urlfield.pagemodel://{}'.format(x.pk))
+        self.assertEqual(form.cleaned_data['url'].get_object(), x)
+
+        expected = AnyUrlValue.from_db_value('any_urlfield.pagemodel://{}'.format(x.pk), url_type_registry=reg)
+        self.assertEqual(form.cleaned_data['url'], expected)
+
+        # Test 3: invalid ID
+        x = PageModel.objects.create(slug='foo')
+        form = ExampleForm(data={
+            'url_0': 'any_urlfield.pagemodel',
+            'url_1': '',
+            'url_2': '-1',
+        })
+        self.assertFalse(form.is_valid())
 
     def test_render_widget(self):
         """
