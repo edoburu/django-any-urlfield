@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import any_urlfield.forms
+import django
+from any_urlfield.forms import SimpleRawIdWidget
 from any_urlfield.models import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
@@ -145,3 +147,31 @@ class FormTests(TestCase):
       </p>
     </div>
     """))
+
+    def test_raw_id_widget(self):
+        """
+        Test how the raw ID widget renders.
+        """
+        from any_urlfield.models import AnyUrlField
+        widget = AnyUrlField._static_registry['any_urlfield.regpagemodel'].get_widget()
+        self.assertIsInstance(widget, SimpleRawIdWidget)
+
+        html = widget.render(name='NAME', value="111")
+
+        if django.VERSION >= (1, 8):
+            self.assertHTMLEqual(html,
+                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                                 ' id="lookup_id_NAME" title="Lookup"></a>')
+        elif django.VERSION >= (1, 7):
+            self.assertHTMLEqual(html,
+                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                                 ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
+                                 ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')
+        else:
+            self.assertHTMLEqual(html,
+                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?t=id" class="related-lookup"'
+                                 ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
+                                 ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')

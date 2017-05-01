@@ -151,11 +151,36 @@ class AnyUrlWidget(widgets.MultiWidget):
     else:
         def get_context(self, name, value, attrs):
             context = super(AnyUrlWidget, self).get_context(name, value, attrs)
-            context['wrap_label'] = True  # fix Django 1.11 "bug" of lost context for RadioSelect field
+
+            # BEGIN Django 1.11 code!
+            if not isinstance(value, list):
+                value = self.decompress(value)
+
+            final_attrs = context['widget']['attrs']
+            input_type = final_attrs.pop('type', None)
+            id_ = final_attrs.get('id')
+            subwidgets = []
+            for i, widget in enumerate(self.widgets):
+                if input_type is not None:
+                    widget.input_type = input_type
+                widget_name = '%s_%s' % (name, i)
+                try:
+                    widget_value = value[i]
+                except IndexError:
+                    widget_value = None
+                if id_:
+                    widget_attrs = final_attrs.copy()
+                    widget_attrs['id'] = '%s_%s' % (id_, i)
+                else:
+                    widget_attrs = final_attrs
+
+                # FIX Django 1.11 "bug" of lost context for fields!
+                subwidgets.append(widget.get_context(widget_name, widget_value, widget_attrs))
+            context['widget']['subwidgets'] = subwidgets
+            # END
 
             # Each subwidget corresponds with an registered URL type.
             # Make sure the template can render the proper ID's for JavaScript.
-            subwidgets = context['widget']['subwidgets']
             for i, urltype in enumerate(self.url_type_registry):
                 subwidgets[i + 1]['prefix'] = RE_CLEANUP_CLASS.sub('', urltype.prefix)
 

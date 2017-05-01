@@ -1,13 +1,27 @@
+{% load any_urlfield_tags %}{% comment %}
+  The Django 1.11 MultiWidget doesn't pass the entire context of the subwidgets
+  properly to the template. It only includes the 'widget' field in the 'subwidgets' template.
+  This looses extra fields, such as:
+  - wrap_label for RadioSelect / UrlTypeSelect
+  - related_url, link_title, link_label for ForeignKeyRawIdWidget
+
+  Hence, our AnyUrlWidget passes the full context along,
+  and the `withdict` tag makes sure this is pushed to the context.
+{% endcomment %}
 <div class="related-widget-wrapper">
   {# Single type selector widget #}
-  {% with type_widget=widget.subwidgets.0 %}
-    {% include type_widget.template_name with widget=type_widget %}
+  {% with type_context=widget.subwidgets.0 %}
+    {% withdict type_context %}
+      {% include widget.template_name %}
+    {% endwithdict %}
   {% endwith %}
 
   {# All subwidgets for the different types #}
-  {% for widget in widget.subwidgets|slice:"1:" %}
-    <p class="any_urlfield-url-{{ widget.prefix }}" style="clear:left">
-      {% include widget.template_name %}
-    </p>
+  {% for widget_context in widget.subwidgets|slice:"1:" %}
+    {% withdict widget_context %}
+      <p class="any_urlfield-url-{{ prefix }}" style="clear:left">
+        {% include widget.template_name %}
+      </p>
+    {% endwithdict %}
   {% endfor %}
 </div>

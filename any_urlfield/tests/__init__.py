@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from any_urlfield.forms import SimpleRawIdWidget
 from any_urlfield.models import AnyUrlField
+from django.contrib import admin
 from django.db import models
 
 
@@ -32,6 +33,7 @@ class RegPageModel(models.Model):
         return '/{0}/'.format(self.slug)
 
 AnyUrlField.register_model(RegPageModel, widget=SimpleRawIdWidget(RegPageModel))
+admin.site.register(RegPageModel)  # Needed for SimpleRawIdWidget to render
 
 
 # Import tests (Django 1.5-)
