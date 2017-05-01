@@ -135,14 +135,3 @@ class AnyUrlField(base_class):
             elif value.type_value:
                 if not value.exists():
                     raise ValidationError(self.error_messages['invalid_choice'] % value.type_value)
-
-
-if django.VERSION < (1, 7):
-    # Tell South how to create custom fields
-    try:
-        from south.modelsinspector import add_introspection_rules
-        add_introspection_rules([], [
-            "^" + __name__.replace(".", "\.") + "\.AnyUrlField",
-        ])
-    except ImportError:
-        pass

@@ -163,15 +163,9 @@ class FormTests(TestCase):
                                  '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
                                  '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
                                  ' id="lookup_id_NAME" title="Lookup"></a>')
-        elif django.VERSION >= (1, 7):
-            self.assertHTMLEqual(html,
-                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
-                                 ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
-                                 ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')
         else:
             self.assertHTMLEqual(html,
                                  '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?t=id" class="related-lookup"'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
                                  ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
                                  ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')

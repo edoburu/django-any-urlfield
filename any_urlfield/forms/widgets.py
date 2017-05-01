@@ -127,12 +127,6 @@ class AnyUrlWidget(widgets.MultiWidget):
 
         return result
 
-    if django.VERSION < (1, 6, 0):
-        def _has_changed(self, initial, data):
-            if initial is None:
-                initial = [u'http', u'', u'', u'']
-            return super(AnyUrlWidget, self)._has_changed(initial, data)
-
     if django.VERSION < (1, 11):
         def format_output(self, rendered_widgets):
             """
@@ -206,16 +200,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
         """
         Instantiate the class.
         """
-        if django.VERSION >= (1, 6, 0):
-            rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
-        else:
-            rel = ManyToOneRel(model, model._meta.pk.name, limit_choices_to=limit_choices_to)
-
-        if django.VERSION < (1, 4):
-            super(SimpleRawIdWidget, self).__init__(rel=rel, attrs=attrs, using=using)
-        else:
-            # admin_site was added in Django 1.4, fixing the popup URL for the change list.
-            # Also default to admin.site, allowing a more auto-configuration style.
-            if admin_site is None:
-                admin_site = admin.site
-            super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
+        if admin_site is None:
+            admin_site = admin.site
+        rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
+        super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)

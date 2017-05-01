@@ -128,15 +128,6 @@ class AnyUrlField(forms.MultiValueField):
         self.validate(out)
         return out
 
-    if django.VERSION < (1, 7):
-        # ModelChoiceField.__deepcopy__ was skipped because this object didn't deepcopy the fields.
-        # That causes issues when the queryset needs to be reevaluated (e.g. for queries with a SITE_ID threadlocal).
-
-        def __deepcopy__(self, memo):
-            result = super(AnyUrlField, self).__deepcopy__(memo)
-            result.fields = copy.deepcopy(result.fields, memo)
-            return result
-
 
 class ExtendedURLField(forms.URLField):
     """

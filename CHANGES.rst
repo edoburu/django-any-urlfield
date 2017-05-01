@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Changes in git
+--------------
+
+* Dropped Django 1.4, 1.5, 1.6 support
+
+
 Version 2.3 (2017-05-01)
 ------------------------
 

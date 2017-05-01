@@ -34,11 +34,3 @@ class RegPageModel(models.Model):
 
 AnyUrlField.register_model(RegPageModel, widget=SimpleRawIdWidget(RegPageModel))
 admin.site.register(RegPageModel)  # Needed for SimpleRawIdWidget to render
-
-
-# Import tests (Django 1.5-)
-from .test_forms import FormTests
-from .test_models import ModelTests
-from .test_pickle import PickleTests
-from .test_serializers import SerializerTests
-from .test_validation import ValidationTests
