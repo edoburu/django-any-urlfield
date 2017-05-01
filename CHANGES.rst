@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Git changes
------------
+Version 2.3 (2017-05-01)
+------------------------
 
 * Added Django 1.11 support.
 * Dropped Python 2.6 support.
