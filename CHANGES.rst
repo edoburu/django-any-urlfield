@@ -1,7 +1,13 @@
 Changelog
 =========
 
-Version 2.3 (2017-05-01)
+Version 2.4.1 (2017-05-05)
+--------------------------
+
+* Fixed packaging bugs that prevented including the HTML templates for Django 1.11.
+
+
+Version 2.4 (2017-05-01)
 ------------------------
 
 * Added Django 1.11 support.
