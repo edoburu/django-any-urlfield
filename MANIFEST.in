@@ -5,3 +5,4 @@ include CHANGES.rst
 include LICENSE
 recursive-include any_urlfield/static *.js *.css
 recursive-include any_urlfield/locale *.po *.mo
+recursive-include any_urlfield/templates *.html
