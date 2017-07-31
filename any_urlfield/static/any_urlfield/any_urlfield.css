@@ -1,3 +1,21 @@
+form .aligned .any-urlfield-wrapper ul {
+  margin-left: 0;
+  padding-left: 3px;
+}
+
+form .aligned .any-urlfield-wrapper ul:after {
+  /* clearfix */
+  content: "";
+  display: table;
+  clear: both;
+}
+
+form div.form-row .any-urlfield-wrapper p {
+  /* Fix alignment within inlines */
+  margin-left: 0;
+  padding-left: 0;
+}
+
 form .aligned td ul.any_urlfield-url_type {
   /* Fix alignment in tabular inline */
   margin-left: 0;

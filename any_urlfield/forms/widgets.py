@@ -147,7 +147,7 @@ class AnyUrlWidget(widgets.MultiWidget):
                 prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
                 output.append(u'<p class="any_urlfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
 
-            return u'<div class="related-widget-wrapper">{0}</div>'.format(u''.join(output))
+            return u'<div class="any-urlfield-wrapper related-widget-wrapper">{0}</div>'.format(u''.join(output))
     else:
         def get_context(self, name, value, attrs):
             context = super(AnyUrlWidget, self).get_context(name, value, attrs)

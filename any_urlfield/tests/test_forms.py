@@ -122,7 +122,7 @@ class FormTests(TestCase):
 
         html = Template('{{ form.field }}').render(Context({'form': ExampleForm()}))
         self.assertHTMLEqual(_normalize_html(html), _normalize_html("""
-    <div class="related-widget-wrapper">
+    <div class="any-urlfield-wrapper related-widget-wrapper">
       <ul class="any_urlfield-url_type radiolist inline" id="id_field_0">
         <li>
           <label for="id_field_0_0">
