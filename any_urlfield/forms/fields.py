@@ -1,8 +1,6 @@
 """
 Custom form fields for URLs
 """
-import copy
-
 import django
 from any_urlfield.forms.widgets import AnyUrlWidget
 from any_urlfield.validators import ExtendedURLValidator
@@ -48,7 +46,7 @@ class AnyUrlField(forms.MultiValueField):
 
             fields.append(field)
             choices.append((urltype.prefix, urltype.title))
-        fields.insert(0, forms.ChoiceField(label=_("Type URL"), choices=choices))
+        fields.insert(0, forms.ChoiceField(label=_("Type URL"), choices=choices, initial=choices[0][0]))
 
         # Instantiate widget. Is not done by parent at all.
         widget = self.widget(url_type_registry=url_type_registry)
@@ -127,6 +125,23 @@ class AnyUrlField(forms.MultiValueField):
 
         self.validate(out)
         return out
+
+    if django.VERSION >= (1, 8):
+        def has_changed(self, initial, data):
+            # special case, except when no data was set, because our decompress()
+            # will cause a comparison between ['http', '', ''] and ['', '', ''].
+            if initial is None and not any(data[1:]):
+                return False
+
+            return super(AnyUrlField, self).has_changed(initial, data)
+    else:
+        def _has_changed(self, initial, data):
+            # special case, except when no data was set, because our decompress()
+            # will cause a comparison between ['http', '', ''] and ['', '', ''].
+            if initial is None and not any(data[1:]):
+                return False
+
+            return super(AnyUrlField, self)._has_changed(initial, data)
 
 
 class ExtendedURLField(forms.URLField):

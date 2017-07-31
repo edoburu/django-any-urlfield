@@ -7,6 +7,13 @@ Changes in git
 * Dropped Django 1.4, 1.5, 1.6 support
 
 
+Version 2.4.2 (2017-07-31)
+--------------------------
+
+* Fixed form ``has_changed`` check, preventing inline fieldsets to be submitted.
+* Fixed widget alignment inside inlines.
+
+
 Version 2.4.1 (2017-05-05)
 --------------------------
 
