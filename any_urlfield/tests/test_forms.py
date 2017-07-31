@@ -10,6 +10,8 @@ from django import forms
 from django.template import Context, Template
 from django.test import TestCase
 
+from any_urlfield.tests.utils import get_input_values
+
 
 class FormTests(TestCase):
     """
@@ -175,3 +177,45 @@ class FormTests(TestCase):
                                  '<a href="/admin/any_urlfield/regpagemodel/?t=id" class="related-lookup"'
                                  ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
                                  ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')
+
+    def test_has_changed_empty_form(self):
+        """
+        Test that empty placeholder forms are not considered filled in
+        """
+        reg = UrlTypeRegistry()
+        reg.register(PageModel)
+
+        class ExampleForm(forms.Form):
+            url = any_urlfield.forms.AnyUrlField(url_type_registry=reg)
+
+        form = ExampleForm(empty_permitted=True)
+        data = get_input_values(form.as_p())
+        assert form.initial == {}
+        assert data == {'url_0': 'http', 'url_1': ''}
+
+        # Submit the values unchanged
+        form = ExampleForm(data=data, empty_permitted=True)
+        self.assertFalse(form.has_changed(), "form marked as changed!")
+
+    def test_get_input_values(self):
+        """
+        Test the test code
+        """
+        html = (
+            '<div>\n'
+            '<input type="hidden" name="hdn" value="123" />\n'
+            '<div>\n'
+            '<input type="email" name="email" value="test@example.org" />\n'
+            '<input type="checkbox" name="chk" checked="checked" />\n'
+            '<input type="checkbox" name="not_chk" />\n'
+            '</div>\n'
+            '<input type="radio" name="rad" value="1" checked />\n'
+            '<input type="radio" name="rad" value="2" />\n'
+            '</div>'
+        )
+        self.assertEqual(get_input_values(html), {
+            'hdn': "123",
+            'email': "test@example.org",
+            'rad': "1",
+            'chk': "yes",
+        })
