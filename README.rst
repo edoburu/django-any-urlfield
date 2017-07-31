@@ -38,16 +38,9 @@ Screenshot
 Installation
 ============
 
-First install the module, preferably in a virtual environment. It can be installed from PyPI::
+First install the module, preferably in a virtual environment::
 
     pip install django-any-urlfield
-
-Or the current folder can be installed::
-
-    pip install .
-
-Configuration
--------------
 
 Add the module to the installed apps:
 
@@ -60,7 +53,7 @@ Add the module to the installed apps:
 Usage
 -----
 
-In a Django model, the field can be included:
+Add the field to a Django model:
 
 .. code-block:: python
 
@@ -72,8 +65,8 @@ In a Django model, the field can be included:
         url = AnyUrlField("URL")
 
 By default, the ``AnyUrlField`` only supports linking to external pages.
-To add support for your own models (e.g. an ``Article`` model),
-include the following code in ``models.py``:
+
+Register any model that the ``AnyUrlField`` should support linking to:
 
 .. code-block:: python
 
@@ -81,8 +74,10 @@ include the following code in ``models.py``:
     AnyUrlField.register_model(Article)
 
 Now, the ``AnyUrlField`` offers users a dropdown field to directly select an article.
-By default, it uses a ``django.forms.models.ModelChoiceField`` field with a ``django.forms.widgets.Select`` widget
-to render the field.  This can be customized using the ``form_field`` and ``widget`` parameters:
+
+The default field is a ``django.forms.models.ModelChoiceField`` field
+with a ``django.forms.widgets.Select`` widget.
+This can be customized using the ``form_field`` and ``widget`` parameters:
 
 .. code-block:: python
 
@@ -91,7 +86,7 @@ to render the field.  This can be customized using the ``form_field`` and ``widg
 
     AnyUrlField.register_model(Article, widget=SimpleRawIdWidget(Article))
 
-Now, the ``Article`` model will be displayed as raw input field with a browse button.
+That will display the ``Article`` model as raw input field with a browse button.
 
 
 Contributing
