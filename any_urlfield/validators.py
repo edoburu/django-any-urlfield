@@ -1,8 +1,9 @@
 import re
 
-from any_urlfield import EXTERNAL_SCHEMES
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+
+from any_urlfield import EXTERNAL_SCHEMES
 
 try:
     from urllib.parse import urlparse  # Python 3

@@ -2,10 +2,11 @@ from __future__ import unicode_literals
 
 import pickle
 
+from django.test import TestCase
+
 from any_urlfield.models import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel
-from django.test import TestCase
 
 try:
     from StringIO import StringIO       # Python 2

@@ -2,6 +2,7 @@
 Custom widgets used by the URL form fields.
 """
 from __future__ import unicode_literals
+
 import re
 
 import django

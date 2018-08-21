@@ -1,10 +1,11 @@
-from any_urlfield import EXTERNAL_SCHEMES
-from any_urlfield.forms.fields import ExtendedURLField
 from django import forms
 from django.core.cache import cache
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+
+from any_urlfield import EXTERNAL_SCHEMES
 from any_urlfield.cache import get_object_cache_keys
+from any_urlfield.forms.fields import ExtendedURLField
 
 
 class UrlType(object):

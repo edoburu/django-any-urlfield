@@ -2,14 +2,15 @@
 Custom form fields for URLs
 """
 import django
-from any_urlfield.forms.widgets import AnyUrlWidget
-from any_urlfield.validators import ExtendedURLValidator
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db.models.base import Model
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
+
+from any_urlfield.forms.widgets import AnyUrlWidget
+from any_urlfield.validators import ExtendedURLValidator
 
 try:
     from django.forms.utils import ErrorList  # Django 1.7

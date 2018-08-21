@@ -2,11 +2,14 @@
 Custom data objects
 """
 from __future__ import unicode_literals
-from django.utils import six
+
+import logging
+
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
-import logging
+
 from any_urlfield.cache import get_urlfield_cache_key
 
 try:

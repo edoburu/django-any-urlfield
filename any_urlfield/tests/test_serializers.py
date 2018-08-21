@@ -2,11 +2,12 @@ from __future__ import unicode_literals
 
 import json
 
-from any_urlfield.models import AnyUrlValue
-from any_urlfield.tests import RegPageModel, UrlModel
 from django.core import serializers
 from django.core.serializers.base import DeserializationError
 from django.test import TestCase
+
+from any_urlfield.models import AnyUrlValue
+from any_urlfield.tests import RegPageModel, UrlModel
 
 
 class SerializerTests(TestCase):

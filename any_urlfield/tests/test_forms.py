@@ -1,15 +1,15 @@
 from __future__ import unicode_literals
 
-import any_urlfield.forms
 import django
-from any_urlfield.forms import SimpleRawIdWidget
-from any_urlfield.models import AnyUrlValue
-from any_urlfield.registry import UrlTypeRegistry
-from any_urlfield.tests import PageModel, RegPageModel, UrlModel
 from django import forms
 from django.template import Context, Template
 from django.test import TestCase
 
+import any_urlfield.forms
+from any_urlfield.forms import SimpleRawIdWidget
+from any_urlfield.models import AnyUrlValue
+from any_urlfield.registry import UrlTypeRegistry
+from any_urlfield.tests import PageModel, RegPageModel, UrlModel
 from any_urlfield.tests.utils import get_input_values
 
 

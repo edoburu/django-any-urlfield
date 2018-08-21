@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
+from django.test import TestCase
+from django.utils import six
+
 from any_urlfield.models import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
-from django.utils import six
-from django.test import TestCase
 
 unicode = six.text_type
 
