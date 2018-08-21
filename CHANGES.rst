@@ -1,10 +1,13 @@
 Changelog
 =========
 
-Changes in git
---------------
+Version 2.5 (2018-07-21)
+------------------------
 
-* Dropped Django 1.4, 1.5, 1.6 support
+* Added Django 2.0 and 2.1 support
+* Added ``AnyUrlField.resolve_objects()`` to perform bulk lookups for data in querysets and lists.
+* Added ``AnyUrlValue.resolve_values()`` to perform bulk lookups for a list of value objects.
+* Dropped Django 1.4, 1.5, 1.6 and 1.7 support
 
 
 Version 2.4.2 (2017-07-31)
