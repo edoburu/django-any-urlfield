@@ -182,13 +182,18 @@ class FormTests(TestCase):
         class ExampleForm(forms.Form):
             url = any_urlfield.forms.AnyUrlField(url_type_registry=reg)
 
-        form = ExampleForm(empty_permitted=True)
+        if django.VERSION >= (1, 10):
+            empty_kwargs = dict(empty_permitted=True, use_required_attribute=False)
+        else:
+            empty_kwargs = dict(empty_permitted=True)
+
+        form = ExampleForm(**empty_kwargs)
         data = get_input_values(form.as_p())
         assert form.initial == {}
         assert data == {'url_0': 'http', 'url_1': ''}
 
         # Submit the values unchanged
-        form = ExampleForm(data=data, empty_permitted=True)
+        form = ExampleForm(data=data, **empty_kwargs)
         self.assertFalse(form.has_changed(), "form marked as changed!")
 
     def test_get_input_values(self):
