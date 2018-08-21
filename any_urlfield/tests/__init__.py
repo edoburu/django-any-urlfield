@@ -32,5 +32,6 @@ class RegPageModel(models.Model):
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
 
+
 AnyUrlField.register_model(RegPageModel, widget=SimpleRawIdWidget(RegPageModel))
 admin.site.register(RegPageModel)  # Needed for SimpleRawIdWidget to render
