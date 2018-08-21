@@ -146,3 +146,24 @@ class ModelTests(TestCase):
         obj = UrlModel(url=AnyUrlValue.from_db_value('http://www.example.org/'))
         obj.save()
         self.assertTrue(obj.pk)
+
+    def test_resolve_objects(self):
+        """
+        Make sure ID values are properly stored and serialized.
+        """
+        reg = UrlTypeRegistry()
+        urltype = reg.register(PageModel)
+        page = PageModel.objects.create(slug='foo')
+
+        valid = AnyUrlValue(urltype.prefix, page.id, reg)
+        invalid = AnyUrlValue(urltype.prefix, 999999, reg)
+
+        AnyUrlValue.resolve_objects([valid, invalid])
+        self.assertTrue(valid._resolved_objects)
+        self.assertTrue(invalid._resolved_objects)
+
+        with self.assertNumQueries(0):
+            self.assertEqual(valid.get_object(), page)
+            self.assertTrue(valid.exists())
+            self.assertRaises(PageModel.DoesNotExist, lambda: invalid.get_object())
+            self.assertFalse(invalid.exists())

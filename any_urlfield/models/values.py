@@ -57,6 +57,7 @@ class AnyUrlValue(object):
         self.url_type_registry = url_type_registry
         self.url_type = url_type_registry[type_prefix]
         self.type_value = type_value
+        self._resolved_objects = None
 
         if url_type_registry.index(type_prefix) is None:
             raise ValueError("Unsupported AnyUrlValue prefix '{0}'. Supported values are: {1}".format(type_prefix, url_type_registry.keys()))
@@ -132,8 +133,12 @@ class AnyUrlValue(object):
         if self.url_type.prefix == 'http' and self.type_value:
             return True
         elif self.url_type.has_id_value:
-            Model = self.get_model()
-            return Model.objects.filter(pk=self.type_value).exists()
+            if self._resolved_objects is not None:
+                # Test whether the in_bulk() found the object
+                return self.type_value in self._resolved_objects
+            else:
+                Model = self.get_model()
+                return Model.objects.filter(pk=self.type_value).exists()
         elif self.type_value:
             # Random other value that can't be checked
             return True
@@ -157,7 +162,17 @@ class AnyUrlValue(object):
         """
         if self.url_type.has_id_value:
             Model = self.get_model()
-            return Model.objects.get(pk=self.type_value)
+            if self._resolved_objects is not None:
+                try:
+                    return self._resolved_objects[self.type_value]
+                except KeyError:
+                    raise Model.DoesNotExist(
+                        "No {} found with ID '{}' by resolve_objects()".format(
+                            Model.__class__.__name__, self.type_value
+                        )
+                    )
+            else:
+                return Model.objects.get(pk=self.type_value)
         else:
             return None
 
@@ -249,3 +264,19 @@ class AnyUrlValue(object):
 
         self.type_value = type_value
         self.url_type = self.url_type_registry[prefix]
+
+    @classmethod
+    def resolve_objects(cls, values):
+        """
+        Resolve the models for collection of AnyUrlValue objects, to avoid a query per object.
+        """
+        by_model = {}
+        for value in values:
+            if value.url_type.has_id_value:
+                by_model.setdefault(value.url_type.model, {})[value.type_value] = value
+
+        for model, lookups in by_model.items():
+            # When an object can't be found, it simply won't be found in the _resolved_objects dict.
+            resolved_objects = model.objects.in_bulk(lookups.keys())
+            for value in lookups.values():
+                value._resolved_objects = resolved_objects
