@@ -15,8 +15,7 @@ class ExtendedURLValidator(URLValidator):
     """
     Add more schemes to those that will pass validation.
     """
-    if hasattr(URLValidator, 'schemes'):
-        schemes = URLValidator.schemes + list(EXTERNAL_SCHEMES)  # Django 1.8+
+    schemes = URLValidator.schemes + list(EXTERNAL_SCHEMES)
 
     # Phone numbers don't match the host regex in Django's validator,
     # so we test for a simple alternative.

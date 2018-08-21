@@ -10,13 +10,8 @@ from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
 
-if django.VERSION < (1, 8):
-    base_class = six.with_metaclass(models.SubfieldBase, models.CharField)
-else:
-    base_class = models.CharField
 
-
-class AnyUrlField(base_class):
+class AnyUrlField(models.CharField):
     """
     A CharField that can either refer to a CMS page ID, or external URL.
 
@@ -86,7 +81,7 @@ class AnyUrlField(base_class):
         return super(AnyUrlField, self).formfield(**kwargs)
 
     def from_db_value(self, value, expression, connection, context):
-        # As of Django 1.8, this method is used to cast DB values to python values.
+        # This method is used to cast DB values to python values.
         # The call to to_python() is not used anymore.
         if value is None:
             return None
@@ -113,7 +108,7 @@ class AnyUrlField(base_class):
             return value.to_db_value()
 
     def pre_save(self, model_instance, add):
-        # Make sure that the SQL compiler in Django 1.6/1.7 doesn't get a AnyUrlValue,
+        # Make sure that the SQL compiler in doesn't get an AnyUrlValue,
         # but a regular 'str' object it can write to the database.
         value = super(AnyUrlField, self).pre_save(model_instance, add)
         if not value:
