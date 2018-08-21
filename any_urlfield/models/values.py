@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import logging
 
+from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
@@ -12,11 +13,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from any_urlfield.cache import get_urlfield_cache_key
 
-try:
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
 
 unicode = six.text_type
 string_types = six.string_types
@@ -152,7 +148,7 @@ class AnyUrlValue(object):
         Model = self.url_type.model
         if isinstance(Model, string_types):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
-            Model = get_model(app_label, model_name)
+            Model = apps.get_model(app_label, model_name)
         return Model
 
     def get_object(self):

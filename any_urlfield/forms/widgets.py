@@ -10,14 +10,11 @@ from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
+from django.forms.utils import flatatt
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 
-try:
-    from django.forms.utils import flatatt  # Django 1.7+
-except ImportError:
-    from django.forms.util import flatatt
 
 RE_CLEANUP_CLASS = re.compile('[^a-z0-9-_]')
 
