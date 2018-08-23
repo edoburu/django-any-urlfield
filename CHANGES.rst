@@ -1,7 +1,13 @@
 Changelog
 =========
 
-Version 2.5 (2018-07-21)
+Version 2.5.1 (2018-08-23)
+--------------------------
+
+* Fixed ``AnyUrlField.resolve_objects()`` to handle nullable values.
+
+
+Version 2.5 (2018-08-21)
 ------------------------
 
 * Added Django 2.0 and 2.1 support
