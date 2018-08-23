@@ -274,7 +274,7 @@ class AnyUrlValue(object):
         ids_to_resolve = {}
         values_by_model = {}
         for value in values:
-            if value.url_type.has_id_value and value._resolved_objects is None:
+            if value and value.url_type.has_id_value and value._resolved_objects is None:
                 Model = value.url_type.model
                 if skip_cached_urls and cache.get(get_urlfield_cache_key(Model, value.type_value)):
                     continue

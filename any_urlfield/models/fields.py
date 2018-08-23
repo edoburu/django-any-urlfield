@@ -151,7 +151,7 @@ class AnyUrlField(models.CharField):
             model = obj.__class__
             for field in _any_url_fields_by_model[model]:
                 any_url_value = getattr(obj, field)
-                if any_url_value.url_type.has_id_value:
+                if any_url_value and any_url_value.url_type.has_id_value:
                     any_url_values.append(any_url_value)
 
         AnyUrlValue.resolve_values(any_url_values, skip_cached_urls=skip_cached_urls)
