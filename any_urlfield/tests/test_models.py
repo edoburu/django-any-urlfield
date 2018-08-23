@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils import six
 
-from any_urlfield.models import AnyUrlValue
+from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
 
@@ -147,7 +147,7 @@ class ModelTests(TestCase):
         obj.save()
         self.assertTrue(obj.pk)
 
-    def test_resolve_objects(self):
+    def test_resolve_values(self):
         """
         Make sure ID values are properly stored and serialized.
         """
@@ -158,7 +158,8 @@ class ModelTests(TestCase):
         valid = AnyUrlValue(urltype.prefix, page.id, reg)
         invalid = AnyUrlValue(urltype.prefix, 999999, reg)
 
-        AnyUrlValue.resolve_objects([valid, invalid])
+        with self.assertNumQueries(1):
+            AnyUrlValue.resolve_values([valid, invalid])
         self.assertTrue(valid._resolved_objects)
         self.assertTrue(invalid._resolved_objects)
 
@@ -167,3 +168,23 @@ class ModelTests(TestCase):
             self.assertTrue(valid.exists())
             self.assertRaises(PageModel.DoesNotExist, lambda: invalid.get_object())
             self.assertFalse(invalid.exists())
+
+    def test_resolve_objects(self):
+        """
+        Make sure ID values are properly stored and serialized.
+        """
+        page3 = RegPageModel.objects.create(slug='foo3')
+        UrlModel.objects.create(url=AnyUrlValue.from_model(page3))
+        UrlModel.objects.create(url=AnyUrlValue.from_model(page3))
+
+        qs = list(UrlModel.objects.all())
+        with self.assertNumQueries(1):
+            AnyUrlField.resolve_objects(qs)
+        self.assertTrue(qs[0].url._resolved_objects)
+        self.assertTrue(qs[1].url._resolved_objects)
+
+        with self.assertNumQueries(0):
+            for obj in qs:
+                self.assertEqual(str(obj.url), '/modelform/')
+                self.assertTrue(obj.url.exists())
+                self.assertEqual(obj.url.get_object(), page3)

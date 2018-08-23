@@ -1,6 +1,8 @@
 """
 Custom model fields to link to CMS content.
 """
+from collections import defaultdict
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import six
@@ -130,3 +132,39 @@ class AnyUrlField(models.CharField):
             elif value.type_value:
                 if not value.exists():
                     raise ValidationError(self.error_messages['invalid_choice'] % value.type_value)
+
+    @classmethod
+    def resolve_objects(cls, objects, skip_cached_urls=False):
+        """
+        Make sure all AnyUrlValue objects from a set of objects is resolved in bulk.
+        This avoids making a query per item.
+
+        :param objects: A list or queryset of models.
+        :param skip_cached_urls: Whether to avoid prefetching data that has it's URL cached.
+        """
+        # Allow the queryset or list to consist of multiple models.
+        # This supports querysets from django-polymorphic too.
+        queryset = list(objects)
+        any_url_values = []
+
+        for obj in queryset:
+            model = obj.__class__
+            for field in _any_url_fields_by_model[model]:
+                any_url_value = getattr(obj, field)
+                if any_url_value.url_type.has_id_value:
+                    any_url_values.append(any_url_value)
+
+        AnyUrlValue.resolve_values(any_url_values, skip_cached_urls=skip_cached_urls)
+
+
+class _ModelFieldsCache(defaultdict):
+    def __missing__(self, model):
+        from .fields import AnyUrlField
+        value = [
+            f.name for f in model._meta.get_fields() if isinstance(f, AnyUrlField)
+        ]
+        self[model] = value
+        return value
+
+
+_any_url_fields_by_model = _ModelFieldsCache()

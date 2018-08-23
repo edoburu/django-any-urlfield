@@ -13,7 +13,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from any_urlfield.cache import get_urlfield_cache_key
 
-
 unicode = six.text_type
 string_types = six.string_types
 
@@ -58,6 +57,7 @@ class AnyUrlValue(object):
         self.url_type = url_type_registry[type_prefix]
         self.type_value = type_value
         self._resolved_objects = None
+        self._url_cache = {}
 
         if url_type_registry.index(type_prefix) is None:
             raise ValueError("Unsupported AnyUrlValue prefix '{0}'. Supported values are: {1}".format(type_prefix, url_type_registry.keys()))
@@ -172,7 +172,9 @@ class AnyUrlValue(object):
                         )
                     )
             else:
-                return Model.objects.get(pk=self.type_value)
+                object = Model.objects.get(pk=self.type_value)
+                self._resolved_objects = {self.type_value: object}
+                return object
         else:
             return None
 
@@ -194,14 +196,13 @@ class AnyUrlValue(object):
                 return ""
 
             # First see if the URL is cached
-            Model = self.get_model()
-            cache_key = get_urlfield_cache_key(Model, self.type_value)
+            cache_key = get_urlfield_cache_key(self.get_model(), self.type_value)
             url = cache.get(cache_key)
             if url:
                 return url
 
             try:
-                object = Model.objects.get(pk=self.type_value)
+                object = self.get_object()
                 url = object.get_absolute_url()
                 cache.set(cache_key, url, URL_CACHE_TIMEOUT)
                 return url
@@ -266,17 +267,23 @@ class AnyUrlValue(object):
         self.url_type = self.url_type_registry[prefix]
 
     @classmethod
-    def resolve_objects(cls, values):
+    def resolve_values(cls, values, skip_cached_urls=False):
         """
         Resolve the models for collection of AnyUrlValue objects, to avoid a query per object.
         """
-        by_model = {}
+        ids_to_resolve = {}
+        values_by_model = {}
         for value in values:
-            if value.url_type.has_id_value:
-                by_model.setdefault(value.url_type.model, {})[value.type_value] = value
+            if value.url_type.has_id_value and value._resolved_objects is None:
+                Model = value.url_type.model
+                if skip_cached_urls and cache.get(get_urlfield_cache_key(Model, value.type_value)):
+                    continue
 
-        for model, lookups in by_model.items():
+                ids_to_resolve.setdefault(Model, set()).add(value.type_value)
+                values_by_model.setdefault(Model, []).append(value)
+
+        for Model, ids in ids_to_resolve.items():
             # When an object can't be found, it simply won't be found in the _resolved_objects dict.
-            resolved_objects = model.objects.in_bulk(lookups.keys())
-            for value in lookups.values():
+            resolved_objects = Model.objects.in_bulk(ids)
+            for value in values_by_model[Model]:
                 value._resolved_objects = resolved_objects
