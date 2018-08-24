@@ -8,12 +8,20 @@ import re
 import django
 from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.core.exceptions import ValidationError
 from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.utils import flatatt
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.text import Truncator
+
+try:
+    from django.urls import reverse, NoReverseMatch  # Django 1.10+
+except ImportError:
+    from django.core.urlresolvers import reverse, NoReverseMatch
 
 
 RE_CLEANUP_CLASS = re.compile('[^a-z0-9-_]')
@@ -117,9 +125,12 @@ class AnyUrlWidget(widgets.MultiWidget):
             if value.type_prefix == 'http':
                 values['http'] = value.type_value
             else:
-                values[value.type_prefix] = value.type_value
+                # Instead of just passing the ID, make sure our SimpleRawIdWidget
+                # doesn't have to perform a query while we already have prefetched data.
+                values[value.type_prefix] = value.bound_type_value
 
-        # Append all values in the proper ordering
+        # Append all values in the proper ordering,
+        # for every registered widget type shown in this multiwidget.
         for urltype in self.url_type_registry:
             result.append(values.get(urltype.prefix, None))
 
@@ -202,3 +213,40 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
             admin_site = admin.site
         rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
         super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
+
+    if django.VERSION >= (1, 11):
+        def label_and_url_for_value(self, value):
+            """Optimize retrieval of the data.
+            Because AnyUrlField.decompose() secretly returns both the ID,
+            and it's prefetched object, there is no need to refetch the object here.
+            """
+            try:
+                obj = value.prefetched_object  # ResolvedTypeValue
+            except AttributeError:
+                return super(SimpleRawIdWidget, self).label_and_url_for_value(value)
+
+            # Standard Django logic follows:
+            try:
+                url = reverse(
+                    '{admin}:{app}_{model}_change'.format(
+                        admin=self.admin_site.name,
+                        app=obj._meta.app_label,
+                        model=obj._meta.object_name.lower()
+                    ),
+                    args=(obj.pk,)
+                )
+            except NoReverseMatch:
+                url = ''  # Admin not registered for target model.
+
+            return Truncator(obj).words(14, truncate='...'), url
+    else:
+        def label_for_value(self, value):
+            try:
+                obj = value.prefetched_object  # ResolvedTypeValue
+            except AttributeError:
+                return super(SimpleRawIdWidget, self).label_for_value(value)
+
+            try:
+                return '&nbsp;<strong>%s</strong>' % escape(Truncator(obj).words(14, truncate='...'))
+            except ValueError:
+                return ''

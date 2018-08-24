@@ -186,6 +186,16 @@ class AnyUrlValue(object):
         """
         return self.url_type.prefix
 
+    @property
+    def bound_type_value(self):
+        """Keep a reference to the actual object.
+        This is a trick for ForeignKeyRawIdWidget, which only receives the integer value.
+        Instead of letting it resolve the object, pass the prefetched object here.
+        """
+        if self._resolved_objects and isinstance(self.type_value, (int, long)):
+            return ResolvedTypeValue(self.type_value, self._resolved_objects.get(self.type_value))
+        return self.type_value
+
     # Python 2 support comes from python_2_unicode_compatible
     def __str__(self):
         """
@@ -287,3 +297,24 @@ class AnyUrlValue(object):
             resolved_objects = Model.objects.in_bulk(ids)
             for value in values_by_model[Model]:
                 value._resolved_objects = resolved_objects
+
+
+class ResolvedTypeValue(object):
+    """
+    Keep an ID value associated with the prefetched object.
+    This allows code to pass ``AnyUrlField.bound_type_value``
+    while the widget rendering still reduces the prefetched object.
+    """
+
+    def __init__(self, value, prefetched_object):
+        self.value = value
+        self.prefetched_object = prefetched_object
+
+    def __str__(self):
+        return str(self.value)
+
+    def __int__(self):
+        return int(self.value)
+
+    def __repr__(self):
+        return '<ResolvedTypeValue: {}>'.format(self.value)

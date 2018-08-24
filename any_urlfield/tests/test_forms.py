@@ -8,6 +8,7 @@ from django.test import TestCase
 import any_urlfield.forms
 from any_urlfield.forms import SimpleRawIdWidget
 from any_urlfield.models import AnyUrlValue
+from any_urlfield.models.values import ResolvedTypeValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
 from any_urlfield.tests.utils import get_input_values
@@ -164,6 +165,32 @@ class FormTests(TestCase):
                              '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
                              ' id="lookup_id_NAME" title="Lookup"></a>')
 
+    def test_raw_id_widget_resolved_object(self):
+        """
+        Test how the raw ID widget renders.
+        """
+        from any_urlfield.models import AnyUrlField
+        widget = AnyUrlField._static_registry['any_urlfield.regpagemodel'].get_widget()
+        self.assertIsInstance(widget, SimpleRawIdWidget)
+
+        object = RegPageModel(id=123, slug='OBJ_TITLE')
+        value = ResolvedTypeValue(111, prefetched_object=object)
+
+        with self.assertNumQueries(0):
+            html = widget.render(name='NAME', value=value)
+
+        if django.VERSION >= (1, 11):
+            self.assertHTMLEqual(html,
+                                 '<input type="text" name="NAME" value="111" class="vForeignKeyRawIdAdminField">'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                                 ' id="lookup_id_NAME" title="Lookup"></a>&nbsp;'
+                                 '<strong><a href="/admin/any_urlfield/regpagemodel/123/change/">OBJ_TITLE</a></strong>')
+        else:
+            self.assertHTMLEqual(html,
+                                 '<input type="text" name="NAME" value="111" class="vForeignKeyRawIdAdminField">'
+                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                                 ' id="lookup_id_NAME" title="Lookup"></a>&nbsp;'
+                                 '<strong>OBJ_TITLE</strong>')
 
     def test_has_changed_empty_form(self):
         """
