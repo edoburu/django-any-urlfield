@@ -159,18 +159,11 @@ class FormTests(TestCase):
         self.assertIsInstance(widget, SimpleRawIdWidget)
 
         html = widget.render(name='NAME', value="111")
+        self.assertHTMLEqual(html,
+                             '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
+                             '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                             ' id="lookup_id_NAME" title="Lookup"></a>')
 
-        if django.VERSION >= (1, 8):
-            self.assertHTMLEqual(html,
-                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
-                                 ' id="lookup_id_NAME" title="Lookup"></a>')
-        else:
-            self.assertHTMLEqual(html,
-                                 '<input class="vForeignKeyRawIdAdminField" name="NAME" type="text" value="111" />'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
-                                 ' id="lookup_id_NAME" onclick="return showRelatedObjectLookupPopup(this);">'
-                                 ' <img src="admin/img/selector-search.gif" width="16" height="16" alt="Lookup" /></a>')
 
     def test_has_changed_empty_form(self):
         """

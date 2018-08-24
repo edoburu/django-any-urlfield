@@ -12,6 +12,9 @@ class UrlModel(models.Model):
     """
     url = AnyUrlField()
 
+    def __str__(self):
+        return str(self.url)
+
     def get_absolute_url(self):
         return str(self.url)
 
@@ -22,12 +25,18 @@ class PageModel(models.Model):
     """
     slug = models.SlugField()
 
+    def __str__(self):
+        return self.slug
+
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
 
 
 class RegPageModel(models.Model):
     slug = models.SlugField()
+
+    def __str__(self):
+        return self.slug
 
     def get_absolute_url(self):
         return '/{0}/'.format(self.slug)
