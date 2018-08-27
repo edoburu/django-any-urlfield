@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 2.6 (2018-08-27)
+------------------------
+
+* Dropped Django 1.7 support
+* Optimized formset display - avoid N-queries when ``AnyUrlField.resolve_objects()`` is used.
+
+
 Version 2.5.1 (2018-08-23)
 --------------------------
 

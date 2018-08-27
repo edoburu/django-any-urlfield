@@ -38,7 +38,7 @@ setup(
     license='Apache 2.0',
 
     requires=[
-        'Django (>=1.3)',   # Using staticfiles
+        'Django (>=1.8)',
     ],
 
     description='An improved URL selector to choose between internal models and external URLs',
@@ -65,15 +65,16 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Framework :: Django',
-        'Framework :: Django :: 1.4',
-        'Framework :: Django :: 1.5',
-        'Framework :: Django :: 1.6',
-        'Framework :: Django :: 1.7',
         'Framework :: Django :: 1.8',
         'Framework :: Django :: 1.9',
         'Framework :: Django :: 1.10',
+        'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Libraries :: Python Modules',
