@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Verseion 2.6.1 (2018-08-28)
+---------------------------
+
+* Fixed infinite recursion on ``AnyUrlValue.get_object()`` on unpicked values.
+
+
 Version 2.6 (2018-08-27)
 ------------------------
 
