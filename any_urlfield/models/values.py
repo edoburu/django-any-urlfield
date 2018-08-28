@@ -53,6 +53,7 @@ class AnyUrlValue(object):
             from any_urlfield.models.fields import AnyUrlField
             url_type_registry = AnyUrlField._static_registry
 
+        # Note when adding attributes, also add these to __setstate__()
         self.url_type_registry = url_type_registry
         self.url_type = url_type_registry[type_prefix]
         self.type_value = type_value
@@ -230,6 +231,9 @@ class AnyUrlValue(object):
         return str("<AnyUrlValue '{0}'>".format(self.to_db_value()))
 
     def __getattr__(self, item):
+        if item[0] == '_':
+            # Avoid recursion for missing private fields
+            raise AttributeError(item)
         return getattr(unicode(self), item)
 
     def __getitem__(self, item):
@@ -275,6 +279,8 @@ class AnyUrlValue(object):
 
         self.type_value = type_value
         self.url_type = self.url_type_registry[prefix]
+        self._resolved_objects = None
+        self._url_cache = {}
 
     @classmethod
     def resolve_values(cls, values, skip_cached_urls=False):

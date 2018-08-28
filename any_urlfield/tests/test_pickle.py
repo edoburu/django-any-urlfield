@@ -46,3 +46,7 @@ class PickleTests(TestCase):
         out.seek(0)
         v2 = pickle.load(out)
         self.assertEqual(v1, v2)  # Note that __eq__ is overridden for AnyUrlValue!
+
+        # See that the object still works properly
+        self.assertEqual(v2.get_object(), page)
+        self.assertEqual(str(v2), '/foo/')
