@@ -5,8 +5,8 @@ from collections import defaultdict
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import six
 
+from any_urlfield import six
 from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
@@ -81,7 +81,7 @@ class AnyUrlField(models.CharField):
             del kwargs['widget']
         return super(AnyUrlField, self).formfield(**kwargs)
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         # This method is used to cast DB values to python values.
         # The call to to_python() is not used anymore.
         if value is None:

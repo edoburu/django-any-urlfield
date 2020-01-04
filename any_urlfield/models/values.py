@@ -8,9 +8,8 @@ import logging
 from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils import six
-from django.utils.encoding import python_2_unicode_compatible
 
+from any_urlfield import six
 from any_urlfield.cache import get_urlfield_cache_key
 
 unicode = six.text_type
@@ -26,7 +25,7 @@ logger = logging.getLogger('any_urlfield.models')
 URL_CACHE_TIMEOUT = 3600   # 1 hour
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class AnyUrlValue(object):
     """
     Custom value object for the :class:`~any_urlfield.models.AnyUrlField`.

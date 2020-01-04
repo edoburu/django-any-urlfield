@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
 from django.test import TestCase
-from django.utils import six
 
+from any_urlfield import six
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
