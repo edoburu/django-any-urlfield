@@ -1,7 +1,13 @@
 Changelog
 =========
 
-Verseion 2.6.1 (2018-08-28)
+Version 2.6.2 (2020-01-14)
+--------------------------
+
+* Fixed Django 3.0 compatibility.
+
+
+Version 2.6.1 (2018-08-28)
 ---------------------------
 
 * Fixed infinite recursion on ``AnyUrlValue.get_object()`` on unpicked values.
