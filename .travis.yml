@@ -17,6 +17,10 @@ matrix:
   include:
   - python: '3.6'
     env: PACKAGES="django>=2.1,<2.2"
+  - python: '3.6'
+    env: PACKAGES="django>=2.2,<2.3"
+  - python: '3.6'
+    env: PACKAGES="django>=3.0,<3.1"
 before_install:
 - pip install codecov
 install:
