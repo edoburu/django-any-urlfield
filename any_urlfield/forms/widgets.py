@@ -1,7 +1,6 @@
 """
 Custom widgets used by the URL form fields.
 """
-from __future__ import unicode_literals
 
 import re
 
@@ -51,12 +50,12 @@ if django.VERSION < (1, 11):
                 else:
                     attrs['class'] = extraclasses
 
-            super(HorizontalRadioFieldRenderer, self).__init__(name, value, attrs, choices)
+            super().__init__(name, value, attrs, choices)
 
         def render(self):
-            return mark_safe(u'<ul%s>\n%s\n</ul>' % (
+            return mark_safe('<ul{}>\n{}\n</ul>'.format(
                 flatatt(self.attrs),
-                u'\n'.join([u'<li>%s</li>' % force_str(w) for w in self]))
+                '\n'.join(['<li>%s</li>' % force_str(w) for w in self]))
             )
 
 
@@ -72,11 +71,11 @@ class UrlTypeSelect(widgets.RadioSelect):
         kwargs['attrs'].setdefault('class', 'any_urlfield-url_type radiolist inline')
         if django.VERSION < (1, 11):
             kwargs.setdefault('renderer', HorizontalRadioFieldRenderer)
-        super(UrlTypeSelect, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     if django.VERSION >= (1, 11):
         def get_context(self, name, value, attrs):
-            context = super(UrlTypeSelect, self).get_context(name, value, attrs)
+            context = super().get_context(name, value, attrs)
             context['widget']['flatatt'] = flatatt(context['widget']['attrs'])
             return context
 
@@ -108,7 +107,7 @@ class AnyUrlWidget(widgets.MultiWidget):
         subwidgets.insert(0, self.url_type_widget)
 
         # init MultiWidget base
-        super(AnyUrlWidget, self).__init__(subwidgets, attrs=attrs)
+        super().__init__(subwidgets, attrs=attrs)
 
     def decompress(self, value):
         # Split the value to a dictionary with key per prefix.
@@ -148,12 +147,12 @@ class AnyUrlWidget(widgets.MultiWidget):
             # Wrap remaining options in <p> for scripting.
             for i, widget_html in enumerate(rendered_widgets):
                 prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
-                output.append(u'<p class="any_urlfield-url-{0}" style="clear:left">{1}</p>'.format(prefix, widget_html))
+                output.append('<p class="any_urlfield-url-{}" style="clear:left">{}</p>'.format(prefix, widget_html))
 
-            return u'<div class="any-urlfield-wrapper related-widget-wrapper">{0}</div>'.format(u''.join(output))
+            return '<div class="any-urlfield-wrapper related-widget-wrapper">{}</div>'.format(''.join(output))
     else:
         def get_context(self, name, value, attrs):
-            context = super(AnyUrlWidget, self).get_context(name, value, attrs)
+            context = super().get_context(name, value, attrs)
 
             # BEGIN Django 1.11 code!
             if not isinstance(value, list):
@@ -166,14 +165,14 @@ class AnyUrlWidget(widgets.MultiWidget):
             for i, widget in enumerate(self.widgets):
                 if input_type is not None:
                     widget.input_type = input_type
-                widget_name = '%s_%s' % (name, i)
+                widget_name = '{}_{}'.format(name, i)
                 try:
                     widget_value = value[i]
                 except IndexError:
                     widget_value = None
                 if id_:
                     widget_attrs = final_attrs.copy()
-                    widget_attrs['id'] = '%s_%s' % (id_, i)
+                    widget_attrs['id'] = '{}_{}'.format(id_, i)
                 else:
                     widget_attrs = final_attrs
 
@@ -212,7 +211,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
         if admin_site is None:
             admin_site = admin.site
         rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
-        super(SimpleRawIdWidget, self).__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
+        super().__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
 
     if django.VERSION >= (1, 11):
         def label_and_url_for_value(self, value):
@@ -223,7 +222,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
             try:
                 obj = value.prefetched_object  # ResolvedTypeValue
             except AttributeError:
-                return super(SimpleRawIdWidget, self).label_and_url_for_value(value)
+                return super().label_and_url_for_value(value)
 
             # Standard Django logic follows:
             try:
@@ -244,7 +243,7 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
             try:
                 obj = value.prefetched_object  # ResolvedTypeValue
             except AttributeError:
-                return super(SimpleRawIdWidget, self).label_for_value(value)
+                return super().label_for_value(value)
 
             try:
                 return '&nbsp;<strong>%s</strong>' % escape(Truncator(obj).words(14, truncate='...'))

@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import pickle
 
 from django.test import TestCase

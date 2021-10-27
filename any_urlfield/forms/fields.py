@@ -9,13 +9,8 @@ from django.db.models.base import Model
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
-from any_urlfield import six
 from any_urlfield.forms.widgets import AnyUrlWidget
 from any_urlfield.validators import ExtendedURLValidator
-
-
-if six.PY3:
-    long = int
 
 
 class AnyUrlField(forms.MultiValueField):
@@ -49,7 +44,7 @@ class AnyUrlField(forms.MultiValueField):
         widget = self.widget(url_type_registry=url_type_registry)
         kwargs['widget'] = widget
         kwargs.pop('empty_value', None)  # for Django 1.11
-        super(AnyUrlField, self).__init__(fields, *args, **kwargs)
+        super().__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
         # Reimporting models from froms is tricky, and may lead to circular ImportErrors
@@ -75,7 +70,7 @@ class AnyUrlField(forms.MultiValueField):
                     if isinstance(value, Model):
                         value = value.pk   # Auto cast foreign keys to integer.
                     elif value:
-                        value = long(value)
+                        value = int(value)
                     else:
                         return None
                 return AnyUrlValue(type_prefix, value, self.url_type_registry)
@@ -129,7 +124,7 @@ class AnyUrlField(forms.MultiValueField):
         if initial is None and not any(data[1:]):
             return False
 
-        return super(AnyUrlField, self).has_changed(initial, data)
+        return super().has_changed(initial, data)
 
 
 class ExtendedURLField(forms.URLField):

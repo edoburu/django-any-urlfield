@@ -1,13 +1,8 @@
-from __future__ import unicode_literals
-
 from django.test import TestCase
 
-from any_urlfield import six
 from any_urlfield.models import AnyUrlField, AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.tests import PageModel, RegPageModel, UrlModel
-
-unicode = six.text_type
 
 
 class ModelTests(TestCase):
@@ -41,7 +36,7 @@ class ModelTests(TestCase):
         v = AnyUrlValue.from_db_value("http://www.example.com/", reg)
         self.assertEqual(v.type_prefix, 'http')
         self.assertEqual(v.type_value, "http://www.example.com/")
-        self.assertEqual(unicode(v), "http://www.example.com/")
+        self.assertEqual(str(v), "http://www.example.com/")
 
     def test_from_db_value_https(self):
         """
@@ -52,7 +47,7 @@ class ModelTests(TestCase):
         v = AnyUrlValue.from_db_value("https://www.example.com/", reg)
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "https://www.example.com/")
-        self.assertEqual(unicode(v), "https://www.example.com/")
+        self.assertEqual(str(v), "https://www.example.com/")
 
     def test_from_db_value_ftps(self):
         """
@@ -63,7 +58,7 @@ class ModelTests(TestCase):
         v = AnyUrlValue.from_db_value("ftps://www.example.com/", reg)
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "ftps://www.example.com/")
-        self.assertEqual(unicode(v), "ftps://www.example.com/")
+        self.assertEqual(str(v), "ftps://www.example.com/")
 
     def test_from_db_value_mailto(self):
         """
@@ -74,7 +69,7 @@ class ModelTests(TestCase):
         v = AnyUrlValue.from_db_value("mailto://test@example.com", reg)
         self.assertEqual(v.type_prefix, 'http')   # http is the constant for external URL types
         self.assertEqual(v.type_value, "mailto://test@example.com")
-        self.assertEqual(unicode(v), "mailto://test@example.com")
+        self.assertEqual(str(v), "mailto://test@example.com")
 
     def test_valid_db_id(self):
         """
@@ -94,7 +89,7 @@ class ModelTests(TestCase):
         self.assertEqual(v.to_db_value(), 'any_urlfield.pagemodel://1')
 
         # Frontend
-        self.assertEqual(unicode(v), "/foo/")          # fetches model and returns get_absolute_url()
+        self.assertEqual(str(v), "/foo/")          # fetches model and returns get_absolute_url()
 
         # Programmer API's
         self.assertIs(v.get_model(), PageModel)
@@ -116,7 +111,7 @@ class ModelTests(TestCase):
         # Frontend
         from any_urlfield.models.values import logger
         logger.warning("NOTE: The following statement will cause a log to output")
-        self.assertEqual(unicode(v), "#DoesNotExist")       # Avoids frontend errors
+        self.assertEqual(str(v), "#DoesNotExist")       # Avoids frontend errors
 
         # Programmer API's
         self.assertIs(v.get_model(), PageModel)

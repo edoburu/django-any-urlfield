@@ -8,7 +8,7 @@ from any_urlfield.cache import get_object_cache_keys
 from any_urlfield.forms.fields import ExtendedURLField
 
 
-class UrlType(object):
+class UrlType:
 
     def __init__(self, model, form_field, widget, title, prefix, has_id_value):
         if form_field is None:
@@ -25,7 +25,7 @@ class UrlType(object):
         self.has_id_value = has_id_value
 
     def __repr__(self):
-        return "<UrlType {0}>".format(self.prefix)
+        return "<UrlType {}>".format(self.prefix)
 
     def __getstate__(self):
         # Can't pickle lambda or callable values, so force evaluation
@@ -72,7 +72,7 @@ class UrlType(object):
         return widget
 
 
-class UrlTypeRegistry(object):
+class UrlTypeRegistry:
     """
     Registration backend to administrate the various types.
     """
@@ -92,21 +92,21 @@ class UrlTypeRegistry(object):
         Register a custom model with the ``AnyUrlField``.
         """
         if any(urltype.model == ModelClass for urltype in self._url_types):
-            raise ValueError("Model is already registered: '{0}'".format(ModelClass))
+            raise ValueError("Model is already registered: '{}'".format(ModelClass))
 
         opts = ModelClass._meta
         opts = opts.concrete_model._meta
 
         if not prefix:
             # Store something descriptive, easier to lookup from raw database content.
-            prefix = '{0}.{1}'.format(opts.app_label, opts.object_name.lower())
+            prefix = '{}.{}'.format(opts.app_label, opts.object_name.lower())
         if not title:
             title = ModelClass._meta.verbose_name
 
         if self.is_external_url_prefix(prefix):
-            raise ValueError("Invalid prefix value: '{0}'.".format(prefix))
+            raise ValueError("Invalid prefix value: '{}'.".format(prefix))
         if self[prefix] is not None:
-            raise ValueError("Prefix is already registered: '{0}'".format(prefix))
+            raise ValueError("Prefix is already registered: '{}'".format(prefix))
         if form_field is not None and widget is not None:
             raise ValueError("Provide either a form_field or widget; use the widget parameter of the form field instead.")
 

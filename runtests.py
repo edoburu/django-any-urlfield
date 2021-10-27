@@ -10,8 +10,8 @@ from os import path
 warnings.simplefilter('always', DeprecationWarning)
 
 # Give feedback on used versions
-sys.stderr.write('Using Python version {0} from {1}\n'.format(sys.version[:5], sys.executable))
-sys.stderr.write('Using Django version {0} from {1}\n'.format(
+sys.stderr.write('Using Python version {} from {}\n'.format(sys.version[:5], sys.executable))
+sys.stderr.write('Using Django version {} from {}\n'.format(
     django.get_version(),
     path.dirname(path.abspath(django.__file__)))
 )

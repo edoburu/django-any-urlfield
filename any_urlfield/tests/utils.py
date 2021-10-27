@@ -1,4 +1,3 @@
-
 try:
     from html.parser import HTMLParser
 except ImportError:

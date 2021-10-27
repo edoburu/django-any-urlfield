@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from any_urlfield.forms import SimpleRawIdWidget
 from any_urlfield.models import AnyUrlField
 from django.contrib import admin
@@ -29,7 +27,7 @@ class PageModel(models.Model):
         return self.slug
 
     def get_absolute_url(self):
-        return '/{0}/'.format(self.slug)
+        return '/{}/'.format(self.slug)
 
 
 class RegPageModel(models.Model):
@@ -39,7 +37,7 @@ class RegPageModel(models.Model):
         return self.slug
 
     def get_absolute_url(self):
-        return '/{0}/'.format(self.slug)
+        return '/{}/'.format(self.slug)
 
 
 AnyUrlField.register_model(RegPageModel, widget=SimpleRawIdWidget(RegPageModel))

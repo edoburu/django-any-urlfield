@@ -6,7 +6,6 @@ from collections import defaultdict
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from any_urlfield import six
 from any_urlfield.models.values import AnyUrlValue
 from any_urlfield.registry import UrlTypeRegistry
 from any_urlfield.validators import ExtendedURLValidator
@@ -53,7 +52,7 @@ class AnyUrlField(models.CharField):
     def __init__(self, *args, **kwargs):
         if 'max_length' not in kwargs:
             kwargs['max_length'] = 300
-        super(AnyUrlField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def register_model(cls, ModelClass, form_field=None, widget=None, title=None, prefix=None):
@@ -79,7 +78,7 @@ class AnyUrlField(models.CharField):
         kwargs['url_type_registry'] = self._static_registry
         if 'widget' in kwargs:
             del kwargs['widget']
-        return super(AnyUrlField, self).formfield(**kwargs)
+        return super().formfield(**kwargs)
 
     def from_db_value(self, value, expression, connection, context=None):
         # This method is used to cast DB values to python values.
@@ -99,7 +98,7 @@ class AnyUrlField(models.CharField):
         return AnyUrlValue.from_db_value(value, self._static_registry)
 
     def get_prep_value(self, value):
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             # Happens with south migration
             return value
         elif value is None:
@@ -111,7 +110,7 @@ class AnyUrlField(models.CharField):
     def pre_save(self, model_instance, add):
         # Make sure that the SQL compiler in doesn't get an AnyUrlValue,
         # but a regular 'str' object it can write to the database.
-        value = super(AnyUrlField, self).pre_save(model_instance, add)
+        value = super().pre_save(model_instance, add)
         if not value:
             return None
         else:
@@ -124,7 +123,7 @@ class AnyUrlField(models.CharField):
 
     def validate(self, value, model_instance):
         # Final validation of the field, before storing in the DB.
-        super(AnyUrlField, self).validate(value, model_instance)
+        super().validate(value, model_instance)
         if value:
             if value.type_prefix == 'http':
                 validate_url = ExtendedURLValidator()

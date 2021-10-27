@@ -1,7 +1,6 @@
 """
 Custom data objects
 """
-from __future__ import unicode_literals
 
 import logging
 
@@ -9,14 +8,7 @@ from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
-from any_urlfield import six
 from any_urlfield.cache import get_urlfield_cache_key
-
-unicode = six.text_type
-string_types = six.string_types
-
-if six.PY3:
-    long = int
 
 
 logger = logging.getLogger('any_urlfield.models')
@@ -25,8 +17,7 @@ logger = logging.getLogger('any_urlfield.models')
 URL_CACHE_TIMEOUT = 3600   # 1 hour
 
 
-@six.python_2_unicode_compatible
-class AnyUrlValue(object):
+class AnyUrlValue:
     """
     Custom value object for the :class:`~any_urlfield.models.AnyUrlField`.
     This value holds both the internal page ID, and external URL.
@@ -36,9 +27,9 @@ class AnyUrlValue(object):
 
         value = AnyUrlValue.from_db_value(url)
         article = value.get_object()
-        print unicode(value)
+        print str(value)
 
-    A conversion to :class:`unicode` or :class:`str` causes the URL to be generated.
+    A conversion to :class:`str` or :class:`str` causes the URL to be generated.
     This allows the field value to be used in string concatenations, or template variable evaluations:
 
     .. code-block:: html+django
@@ -60,7 +51,7 @@ class AnyUrlValue(object):
         self._url_cache = {}
 
         if url_type_registry.index(type_prefix) is None:
-            raise ValueError("Unsupported AnyUrlValue prefix '{0}'. Supported values are: {1}".format(type_prefix, url_type_registry.keys()))
+            raise ValueError("Unsupported AnyUrlValue prefix '{}'. Supported values are: {}".format(type_prefix, url_type_registry.keys()))
 
     @classmethod
     def from_model(cls, model, url_type_registry=None):
@@ -74,7 +65,7 @@ class AnyUrlValue(object):
 
         url_type = url_type_registry.get_for_model(model.__class__)
         if url_type is None:
-            raise ValueError("Unregistered model for AnyUrlValue: {0}".format(model.__class__))
+            raise ValueError("Unregistered model for AnyUrlValue: {}".format(model.__class__))
 
         return cls(url_type.prefix, model.pk, url_type_registry)
 
@@ -104,12 +95,12 @@ class AnyUrlValue(object):
 
         url_type = url_type_registry[prefix]
         if url_type is None:
-            raise ValueError("Unsupported URL prefix in database value '{0}'. Supported values are: {1}".format(url, url_type_registry.keys()))
+            raise ValueError("Unsupported URL prefix in database value '{}'. Supported values are: {}".format(url, url_type_registry.keys()))
 
         if url_type.has_id_value:
             if url_rest == 'None':
                 return None
-            id = long(url_rest)
+            id = int(url_rest)
             return AnyUrlValue(prefix, id, url_type_registry)
         else:
             return AnyUrlValue(prefix, url, url_type_registry)
@@ -124,7 +115,7 @@ class AnyUrlValue(object):
         elif self.type_value is None:
             return None  # avoid app.model://None
         else:
-            return "{0}://{1}".format(self.url_type.prefix, self.type_value)
+            return "{}://{}".format(self.url_type.prefix, self.type_value)
 
     def exists(self):
         """
@@ -151,7 +142,7 @@ class AnyUrlValue(object):
         Return the model that this value points to.
         """
         Model = self.url_type.model
-        if isinstance(Model, string_types):
+        if isinstance(Model, str):
             app_label, model_name = Model.split(".")  # assome appname.ModelName otherwise.
             Model = apps.get_model(app_label, model_name)
         return Model
@@ -192,11 +183,11 @@ class AnyUrlValue(object):
         This is a trick for ForeignKeyRawIdWidget, which only receives the integer value.
         Instead of letting it resolve the object, pass the prefetched object here.
         """
-        if self._resolved_objects and isinstance(self.type_value, (int, long)):
+        if self._resolved_objects and isinstance(self.type_value, int):
             return ResolvedTypeValue(self.type_value, self._resolved_objects.get(self.type_value))
         return self.type_value
 
-    # Python 2 support comes from python_2_unicode_compatible
+    # Python 2 support comes from python_2_str_compatible
     def __str__(self):
         """
         Return the URL that the value points to.
@@ -219,24 +210,24 @@ class AnyUrlValue(object):
             except ObjectDoesNotExist as e:
                 # Silently fail in templates. Avoid full page crashing.
                 logger.error("Failed to generate URL for %r: %s", self, e)
-                return "#{0}".format(e.__class__.__name__)
+                return "#{}".format(e.__class__.__name__)
         else:
             return self.type_value or ""
 
     def __len__(self):
-        return len(unicode(self))
+        return len(str(self))
 
     def __repr__(self):
-        return str("<AnyUrlValue '{0}'>".format(self.to_db_value()))
+        return str("<AnyUrlValue '{}'>".format(self.to_db_value()))
 
     def __getattr__(self, item):
         if item[0] == '_':
             # Avoid recursion for missing private fields
             raise AttributeError(item)
-        return getattr(unicode(self), item)
+        return getattr(str(self), item)
 
     def __getitem__(self, item):
-        return unicode(self).__getitem__(item)
+        return str(self).__getitem__(item)
 
     def __bool__(self):
         return bool(self.type_value)
@@ -304,7 +295,7 @@ class AnyUrlValue(object):
                 value._resolved_objects = resolved_objects
 
 
-class ResolvedTypeValue(object):
+class ResolvedTypeValue:
     """
     Keep an ID value associated with the prefetched object.
     This allows code to pass ``AnyUrlField.bound_type_value``

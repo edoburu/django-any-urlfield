@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import django
 from django import forms
 from django.template import Context, Template
