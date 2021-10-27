@@ -48,6 +48,7 @@ if not settings.configured:
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
+        DEFAULT_AUTO_FIELD = 'django.db.models.AutoField',
         TEST_RUNNER = 'django.test.runner.DiscoverRunner',
         ROOT_URLCONF = 'any_urlfield.tests.urls',
         TEMPLATES = [

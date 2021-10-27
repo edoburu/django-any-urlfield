@@ -81,6 +81,7 @@ class AnyUrlField(models.CharField):
         return super().formfield(**kwargs)
 
     def from_db_value(self, value, expression, connection, context=None):
+        # The "context" parameter is removed in Django 3.0, hence made optional here
         # This method is used to cast DB values to python values.
         # The call to to_python() is not used anymore.
         if value is None:
