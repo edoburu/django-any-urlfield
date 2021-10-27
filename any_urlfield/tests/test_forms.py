@@ -177,18 +177,11 @@ class FormTests(TestCase):
         with self.assertNumQueries(0):
             html = widget.render(name='NAME', value=value)
 
-        if django.VERSION >= (1, 11):
-            self.assertHTMLEqual(html,
-                                 '<input type="text" name="NAME" value="111" class="vForeignKeyRawIdAdminField">'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
-                                 ' id="lookup_id_NAME" title="Lookup"></a>&nbsp;'
-                                 '<strong><a href="/admin/any_urlfield/regpagemodel/123/change/">OBJ_TITLE</a></strong>')
-        else:
-            self.assertHTMLEqual(html,
-                                 '<input type="text" name="NAME" value="111" class="vForeignKeyRawIdAdminField">'
-                                 '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
-                                 ' id="lookup_id_NAME" title="Lookup"></a>&nbsp;'
-                                 '<strong>OBJ_TITLE</strong>')
+        self.assertHTMLEqual(html,
+                             '<input type="text" name="NAME" value="111" class="vForeignKeyRawIdAdminField">'
+                             '<a href="/admin/any_urlfield/regpagemodel/?_to_field=id" class="related-lookup"'
+                             ' id="lookup_id_NAME" title="Lookup"></a>&nbsp;'
+                             '<strong><a href="/admin/any_urlfield/regpagemodel/123/change/">OBJ_TITLE</a></strong>')
 
     def test_has_changed_empty_form(self):
         """
@@ -200,18 +193,13 @@ class FormTests(TestCase):
         class ExampleForm(forms.Form):
             url = any_urlfield.forms.AnyUrlField(url_type_registry=reg)
 
-        if django.VERSION >= (1, 10):
-            empty_kwargs = dict(empty_permitted=True, use_required_attribute=False)
-        else:
-            empty_kwargs = dict(empty_permitted=True)
-
-        form = ExampleForm(**empty_kwargs)
+        form = ExampleForm(empty_permitted=True, use_required_attribute=False)
         data = get_input_values(form.as_p())
         assert form.initial == {}
         assert data == {'url_0': 'http', 'url_1': ''}
 
         # Submit the values unchanged
-        form = ExampleForm(data=data, **empty_kwargs)
+        form = ExampleForm(data=data, empty_permitted=True, use_required_attribute=False)
         self.assertFalse(form.has_changed(), "form marked as changed!")
 
     def test_get_input_values(self):

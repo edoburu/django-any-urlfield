@@ -4,7 +4,6 @@ Custom widgets used by the URL form fields.
 
 import re
 
-import django
 from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.core.exceptions import ValidationError
@@ -12,72 +11,31 @@ from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.utils import flatatt
 from django.template.defaultfilters import slugify
+from django.urls import reverse, NoReverseMatch  # Django 1.10+
 from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
 
-try:
-    from django.urls import reverse, NoReverseMatch  # Django 1.10+
-except ImportError:
-    from django.core.urlresolvers import reverse, NoReverseMatch
-
 
 RE_CLEANUP_CLASS = re.compile('[^a-z0-9-_]')
-
-
-if django.VERSION < (1, 11):
-    from django.forms.widgets import RadioFieldRenderer
-
-    class HorizontalRadioFieldRenderer(RadioFieldRenderer):
-        """
-        Render a :class:`~django.forms.RadioSelect` horizontally in the Django admin interface.
-
-        This produces a similar layout like the ``radio_fields = {'field': admin.HORIZONTAL}`` code does in the admin interface.
-        It can be used as argument for the :class:`~django.forms.RadioSelect` widget:
-
-        .. code-block:: python
-
-            widget = widgets.RadioSelect(choices=choices, renderer=HorizontalRadioFieldRenderer)
-        """
-
-        def __init__(self, name, value, attrs, choices):
-            extraclasses = 'radiolist inline'
-            if extraclasses not in attrs.get('class'):
-                attrs = attrs.copy()
-                if 'class' in attrs:
-                    attrs['class'] += ' ' + extraclasses
-                else:
-                    attrs['class'] = extraclasses
-
-            super().__init__(name, value, attrs, choices)
-
-        def render(self):
-            return mark_safe('<ul{}>\n{}\n</ul>'.format(
-                flatatt(self.attrs),
-                '\n'.join(['<li>%s</li>' % force_str(w) for w in self]))
-            )
 
 
 class UrlTypeSelect(widgets.RadioSelect):
     """
     Horizontal radio select
     """
-    if django.VERSION >= (1, 11):
-        template_name = "any_urlfield/widgets/url_type_select.html"
+    template_name = "any_urlfield/widgets/url_type_select.html"
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('attrs', {})
         kwargs['attrs'].setdefault('class', 'any_urlfield-url_type radiolist inline')
-        if django.VERSION < (1, 11):
-            kwargs.setdefault('renderer', HorizontalRadioFieldRenderer)
         super().__init__(*args, **kwargs)
 
-    if django.VERSION >= (1, 11):
-        def get_context(self, name, value, attrs):
-            context = super().get_context(name, value, attrs)
-            context['widget']['flatatt'] = flatatt(context['widget']['attrs'])
-            return context
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context['widget']['flatatt'] = flatatt(context['widget']['attrs'])
+        return context
 
 
 class AnyUrlWidget(widgets.MultiWidget):
@@ -135,58 +93,42 @@ class AnyUrlWidget(widgets.MultiWidget):
 
         return result
 
-    if django.VERSION < (1, 11):
-        def format_output(self, rendered_widgets):
-            """
-            Custom rendering of the widgets.
-            """
-            urltypes = list(self.url_type_registry)
-            url_type_html = rendered_widgets.pop(0)
-            output = [url_type_html]
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
 
-            # Wrap remaining options in <p> for scripting.
-            for i, widget_html in enumerate(rendered_widgets):
-                prefix = slugify(urltypes[i].prefix)  # can use [i], same order of adding items.
-                output.append('<p class="any_urlfield-url-{}" style="clear:left">{}</p>'.format(prefix, widget_html))
+        # BEGIN Django 1.11 code!
+        if not isinstance(value, list):
+            value = self.decompress(value)
 
-            return '<div class="any-urlfield-wrapper related-widget-wrapper">{}</div>'.format(''.join(output))
-    else:
-        def get_context(self, name, value, attrs):
-            context = super().get_context(name, value, attrs)
+        final_attrs = context['widget']['attrs']
+        input_type = final_attrs.pop('type', None)
+        id_ = final_attrs.get('id')
+        subwidgets = []
+        for i, widget in enumerate(self.widgets):
+            if input_type is not None:
+                widget.input_type = input_type
+            widget_name = '{}_{}'.format(name, i)
+            try:
+                widget_value = value[i]
+            except IndexError:
+                widget_value = None
+            if id_:
+                widget_attrs = final_attrs.copy()
+                widget_attrs['id'] = '{}_{}'.format(id_, i)
+            else:
+                widget_attrs = final_attrs
 
-            # BEGIN Django 1.11 code!
-            if not isinstance(value, list):
-                value = self.decompress(value)
+            # FIX Django 1.11 "bug" of lost context for fields!
+            subwidgets.append(widget.get_context(widget_name, widget_value, widget_attrs))
+        context['widget']['subwidgets'] = subwidgets
+        # END
 
-            final_attrs = context['widget']['attrs']
-            input_type = final_attrs.pop('type', None)
-            id_ = final_attrs.get('id')
-            subwidgets = []
-            for i, widget in enumerate(self.widgets):
-                if input_type is not None:
-                    widget.input_type = input_type
-                widget_name = '{}_{}'.format(name, i)
-                try:
-                    widget_value = value[i]
-                except IndexError:
-                    widget_value = None
-                if id_:
-                    widget_attrs = final_attrs.copy()
-                    widget_attrs['id'] = '{}_{}'.format(id_, i)
-                else:
-                    widget_attrs = final_attrs
+        # Each subwidget corresponds with an registered URL type.
+        # Make sure the template can render the proper ID's for JavaScript.
+        for i, urltype in enumerate(self.url_type_registry):
+            subwidgets[i + 1]['prefix'] = RE_CLEANUP_CLASS.sub('', urltype.prefix)
 
-                # FIX Django 1.11 "bug" of lost context for fields!
-                subwidgets.append(widget.get_context(widget_name, widget_value, widget_attrs))
-            context['widget']['subwidgets'] = subwidgets
-            # END
-
-            # Each subwidget corresponds with an registered URL type.
-            # Make sure the template can render the proper ID's for JavaScript.
-            for i, urltype in enumerate(self.url_type_registry):
-                subwidgets[i + 1]['prefix'] = RE_CLEANUP_CLASS.sub('', urltype.prefix)
-
-            return context
+        return context
 
 
 class SimpleRawIdWidget(ForeignKeyRawIdWidget):
@@ -213,39 +155,27 @@ class SimpleRawIdWidget(ForeignKeyRawIdWidget):
         rel = ManyToOneRel(None, model, model._meta.pk.name, limit_choices_to=limit_choices_to)
         super().__init__(rel=rel, admin_site=admin_site, attrs=attrs, using=using)
 
-    if django.VERSION >= (1, 11):
-        def label_and_url_for_value(self, value):
-            """Optimize retrieval of the data.
-            Because AnyUrlField.decompose() secretly returns both the ID,
-            and it's prefetched object, there is no need to refetch the object here.
-            """
-            try:
-                obj = value.prefetched_object  # ResolvedTypeValue
-            except AttributeError:
-                return super().label_and_url_for_value(value)
+    def label_and_url_for_value(self, value):
+        """Optimize retrieval of the data.
+        Because AnyUrlField.decompose() secretly returns both the ID,
+        and it's prefetched object, there is no need to refetch the object here.
+        """
+        try:
+            obj = value.prefetched_object  # ResolvedTypeValue
+        except AttributeError:
+            return super().label_and_url_for_value(value)
 
-            # Standard Django logic follows:
-            try:
-                url = reverse(
-                    '{admin}:{app}_{model}_change'.format(
-                        admin=self.admin_site.name,
-                        app=obj._meta.app_label,
-                        model=obj._meta.object_name.lower()
-                    ),
-                    args=(obj.pk,)
-                )
-            except NoReverseMatch:
-                url = ''  # Admin not registered for target model.
+        # Standard Django logic follows:
+        try:
+            url = reverse(
+                '{admin}:{app}_{model}_change'.format(
+                    admin=self.admin_site.name,
+                    app=obj._meta.app_label,
+                    model=obj._meta.object_name.lower()
+                ),
+                args=(obj.pk,)
+            )
+        except NoReverseMatch:
+            url = ''  # Admin not registered for target model.
 
-            return Truncator(obj).words(14, truncate='...'), url
-    else:
-        def label_for_value(self, value):
-            try:
-                obj = value.prefetched_object  # ResolvedTypeValue
-            except AttributeError:
-                return super().label_for_value(value)
-
-            try:
-                return '&nbsp;<strong>%s</strong>' % escape(Truncator(obj).words(14, truncate='...'))
-            except ValueError:
-                return ''
+        return Truncator(obj).words(14, truncate='...'), url
