@@ -21,6 +21,7 @@ if not settings.configured:
 
     settings.configure(
         DEBUG = False,  # will be False anyway by DjangoTestRunner.
+        SECRET_KEY = 'testtest',
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
