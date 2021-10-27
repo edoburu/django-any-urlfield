@@ -7,7 +7,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db.models.base import Model
 from django.forms.utils import ErrorList
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from any_urlfield import six
 from any_urlfield.forms.widgets import AnyUrlWidget

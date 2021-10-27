@@ -13,7 +13,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.forms import widgets
 from django.forms.utils import flatatt
 from django.template.defaultfilters import slugify
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
@@ -56,7 +56,7 @@ if django.VERSION < (1, 11):
         def render(self):
             return mark_safe(u'<ul%s>\n%s\n</ul>' % (
                 flatatt(self.attrs),
-                u'\n'.join([u'<li>%s</li>' % force_text(w) for w in self]))
+                u'\n'.join([u'<li>%s</li>' % force_str(w) for w in self]))
             )
 
 
