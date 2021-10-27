@@ -4,6 +4,8 @@
     :target: https://pypi.python.org/pypi/django-any-urlfield/
 .. image:: https://img.shields.io/codecov/c/github/edoburu/django-any-urlfield/master.svg
     :target: https://codecov.io/github/edoburu/django-any-urlfield?branch=master
+.. image:: https://readthedocs.org/projects/django-any-urlfield/badge/?version=latest
+    :target: https://django-any-urlfield.readthedocs.io/en/latest/
 
 django-any-urlfield
 ===================
