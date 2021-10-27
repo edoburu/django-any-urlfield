@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.7 (2021-10-27)
+------------------------
+
+* Added Django 4.0 support.
+* Removed Django 1.10 and 1.11 compatibility.
+* Removed Python 2.7 support.
+
+
 Version 2.6.2 (2020-01-14)
 --------------------------
 
